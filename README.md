@@ -1,5 +1,6 @@
 # DebrisDiskFM
 Forward modeling for circumstellar debris disks in scattered light.
+
 Method: Monte Carlo Markov Chain (MCMC) with the MCFOST disk modeling software.
 
 ## Installation
