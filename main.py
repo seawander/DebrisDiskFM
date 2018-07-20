@@ -8,3 +8,5 @@ sampleTemplate = mcfostParameterTemplate.generateMcfostTemplate(n_zone = n_zone,
 sampleTemplate['#Density structure']['zone0']['row0']['zone type'] = 3
 
 mcfostParameterTemplate.display_file(sampleTemplate, save_path='/Users/echoquet/Desktop/test.para')
+
+print("yeah!")
