@@ -530,8 +530,10 @@ def display_file(para_dict, save_path = None):
             Either a display on the screen (when save_path is None)
             Or save to a file (when save_path is an address, e.g., './template_mcfost_para.para')
     """
+    import sys
+    old = sys.stdout
+    
     if save_path is not None:
-        import sys
         sys.stdout = open(save_path, "w+")
     print0_mcfost_version(para_dict)
     print1_Number_of_photon_packages(para_dict)
@@ -547,6 +549,7 @@ def display_file(para_dict, save_path = None):
     print11_Molecular_RT_settings(para_dict)
     print12_Star_properties(para_dict)
 
+    sys.stdout = old
 # n_zone = 2
 # n_species = [1, 1]#[3, 2]
 # n_star = 1#2
