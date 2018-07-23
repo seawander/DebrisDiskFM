@@ -145,7 +145,7 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
 
 
     param_hd191089_gpi = copy.deepcopy(param_hd191089)
-    gpi_width = 218
+    gpi_width = 281
     param_hd191089_gpi['#Wavelength']['row3']['stokes parameters?'] = 'T'
     param_hd191089_gpi['#Maps']['row0']['nx'] = gpi_width
     param_hd191089_gpi['#Maps']['row0']['ny'] = gpi_width
