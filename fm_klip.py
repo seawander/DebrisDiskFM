@@ -114,7 +114,7 @@ def klip_fm_main(path = './test/', angles = None):
     components = fits.getdata('./data_observation/NICMOS/HD-191089_NICMOS_F110W_Lib-84_KL-19_KLmodes.fits')
     mask = fits.getdata('./data_observation/NICMOS/HD-191089_NICMOS_F110W_Lib-84_KL-19_Mask.fits')
     if angles is None:
-        angles = np.arange(components.shape[0])*5
+        angles = np.concatenate([[19.5699]*4, [49.5699]*4])
 
     disk_rotated = dependences.rotateCube(disk_model, angle = angles, maskedNaN=True, outputMask=False)
     masks_rotated = np.ones(disk_rotated.shape)
