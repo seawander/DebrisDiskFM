@@ -19,10 +19,10 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
     2. The `var_value` contains the list corresponding values for `var_names`.
     3. `paraPath` contains the path where you'd like to save the parameter files. If `None`, it will be saved in currrent folder.
     4. `calcSED`: whether to calculate the spectral energy distribution (SED) for such system.
-        Note: SED calculation takes the majority of time in this code. To save time (and if you do not worry focus on the SED of the system),
+        Note: SED calculation takes the majority of time in this code. To save time (and if you do not focus on the SED of the system),
         you can turn this to `False` when calculating the images.
     5. `calcImage`: whether to calculate the images for such system.
-        Note: before `calcImage`, you have to set `calcSED = True` for at least once. Once you have the SED, you can vary the input parameters
+        Note: before `calcImage`, you have to set `calcSED = True` for at least ONCE. Once you have the SED, you can vary the input parameters
         to generate new images."""
     
     param_hd191089 = mcfostParameterTemplate.generateMcfostTemplate(1, [3], 1)
@@ -173,4 +173,4 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
         if sum(flags_image) > 0:
             print('Image calculation is not performed for all the three wavelengths, please check conflicting folder name(s).')
     
-mcmc_wrapper_hd191089()
+mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, calcSED = True, calcImage = True)
