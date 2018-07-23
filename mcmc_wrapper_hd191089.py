@@ -156,6 +156,7 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
     else:
         if not os.path.exists(paraPath):
             os.mkdir(paraPath)              # Create the folder if it does not exist.
+    currentDirectory = os.getcwd()          # Get current working directory, and jump back at the end
     os.chdir(paraPath)                      # Now everthing is stored in the `paraPath` folder.
     
     mcfostParameterTemplate.display_file(param_hd191089_stis, 'hd191089_stis.para')
@@ -180,6 +181,7 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
 
         if sum(flags_image) > 0:
             print('Image calculation is not performed for all the three wavelengths, please check conflicting folder name(s) or non-existing SED file.')
+    os.chdir(currentDirectory)              # Go back to the top working directory
     
 # mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, calcSED = True, calcImage = True)
 # The above line is tested to see the previosu codes are working.
