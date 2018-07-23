@@ -182,11 +182,11 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
         flags_image = [1, 1, 1]
         flags_image[0] = subprocess.call('mcfost hd191089_stis.para -img 0.5852', shell = True)
         flags_image[1] = subprocess.call('mcfost hd191089_nicmos.para -img 1.12347', shell = True)
-        flags_image[2] = subprocess.call('mcfost hd191089_nicmos.para -img 1.65', shell = True)
+        flags_image[2] = subprocess.call('mcfost hd191089_gpi.para -img 1.65', shell = True)
 
         if sum(flags_image) > 0:
             print('Image calculation is not performed for all the three wavelengths, please check conflicting folder name(s) or non-existing SED file.')
-            flag_run += flags_image
+            flag_run += sum(flags_image)
     os.chdir(currentDirectory)              # Go back to the top working directory
     return flag_run
     # return 0 if everything is performed.
