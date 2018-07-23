@@ -173,4 +173,5 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
         if sum(flags_image) > 0:
             print('Image calculation is not performed for all the three wavelengths, please check conflicting folder name(s).')
     
-mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, calcSED = True, calcImage = True)
+# mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, calcSED = True, calcImage = True)
+# The above line is tested to see the previosu codes are working.
