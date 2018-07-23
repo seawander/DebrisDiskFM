@@ -126,7 +126,7 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
 
     ###############################################################################################
     ########################### Section 3: Parameter File for HD191089 ############################
-    ####################### Instrument-specific adjustations for the system. ######################
+    ######################### Instrument-specific adjusts for the system. #########################
     ###############################################################################################
 
     param_hd191089_stis = copy.deepcopy(param_hd191089)
@@ -154,7 +154,11 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
     if paraPath is None:
         paraPath = './'
     else:
-        if not os.path.exists(paraPath):
+        if os.path.exists(paraPath):
+            import shutil
+            shutil.rmtree(paraPath)         # Delete the folder if it exists to avoid duplicated computing
+            os.mkdir(paraPath) 
+        else:
             os.mkdir(paraPath)              # Create the folder if it does not exist.
     currentDirectory = os.getcwd()          # Get current working directory, and jump back at the end
     os.chdir(paraPath)                      # Now everthing is stored in the `paraPath` folder.
@@ -167,12 +171,13 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
     ####################################### Section 4: Run ########################################
     ############################# Run the parameters and save the outputs. ########################
     ###############################################################################################
+    flag_run = 0
     if calcSED:
         flag_sed = subprocess.call('mcfost hd191089_stis.para', shell = True)
 
         if flag_sed == 1:
             print('SED calculation is not performed, please check conflicting folder name.')
-
+            flag_run += flag_sed
     if calcImage:
         flags_image = [1, 1, 1]
         flags_image[0] = subprocess.call('mcfost hd191089_stis.para -img 0.5852', shell = True)
@@ -181,7 +186,10 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
 
         if sum(flags_image) > 0:
             print('Image calculation is not performed for all the three wavelengths, please check conflicting folder name(s) or non-existing SED file.')
+            flag_run += flags_image
     os.chdir(currentDirectory)              # Go back to the top working directory
+    return flag_run
+    # return 0 if everything is performed.
     
 # mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, calcSED = True, calcImage = True)
 # The above line is tested to see the previosu codes are working.
