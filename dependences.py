@@ -67,6 +67,54 @@ def addplanet(image, planet, orientat = None, starflux = 1, radius = None, angle
         return planetonly
     return planetonly+image
     
+def cutImage(image, halfSize, x_cen = None, y_cen = None, halfSizeX = None, halfSizeY = None, mask = None, relative_shift = False, dx = None, dy = None):
+    """Cut the given image"""
+    
+    image = np.copy(image)
+
+    if x_cen is None:
+        x_cen = (image.shape[1] - 1)/2.0
+    if y_cen is None:
+        y_cen = (image.shape[0] - 1)/2.0
+    if halfSizeX is None:
+        halfSizeX = halfSize
+    if halfSizeY is None:
+        halfSizeY = halfSize
+        
+    if relative_shift == True:
+        if dx is not None:
+            x_cen += dx
+        if dy is not None:
+            y_cen += dy            
+    
+    if mask is None:
+        mask = np.ones(image.shape)
+    mask[np.where(mask < 0.9)] = 0
+    mask[np.where(mask != 0)] = 1    
+    
+    maskNaN = np.ones(image.shape) #In case there are NaN's in the image    
+    maskNaN[np.isnan(image)] = 0
+    
+    mask *= maskNaN
+    
+    image[np.isnan(image)] = 0
+    
+    
+    image_interp = interp2d(np.arange(image.shape[1]), np.arange(image.shape[0]), image)
+    mask_interp = interp2d(np.arange(image.shape[1]), np.arange(image.shape[0]), mask)
+    
+    
+
+    newImage = np.zeros((int(2*halfSizeY+1), int(2*halfSizeX+1)))
+    x_range = np.round(np.arange(x_cen - halfSizeX, x_cen + halfSizeX + 0.1, 1), decimals = 2)
+    y_range = np.round(np.arange(y_cen - halfSizeY, y_cen + halfSizeY + 0.1, 1), decimals = 2)
+    newImage = image_interp(x_range, y_range)
+    maskInterped = mask_interp(x_range, y_range) #Interpolate the image and mask
+    
+    maskInterped[np.where(maskInterped < 0.9)] = 0
+    maskInterped[np.where(maskInterped == 0)] = np.nan
+    
+    return newImage*maskInterped
     
 def rotateImage(cube, mask = None, angle = None, reshape = False, new_width = None, new_height = None, thresh = 0.9, maskedNaN = False, outputMask = True, instrument = None):
     """Rotate an image with 1 mask and 1 angle."""
