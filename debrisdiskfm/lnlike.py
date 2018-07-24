@@ -95,4 +95,4 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     gpi_model = convertMCFOSTdataToJy(gpi_model, wavelength = 1.65, spatialResolution = resolution_gpi) #convert to Jansky/arscec^2
     chi2_gpi = chi2(gpi_obs, gpi_obs_unc, gpi_model)  #return chi-squared value for GPI
     
-    return -0.5*(chi2_stis+chi2_nicmos+chi2_gpi)
+    return -0.5*(chi2_stis+chi2_nicmos+chi2_gpi) #TBD: This is chi2, not loglikelihood yet.
