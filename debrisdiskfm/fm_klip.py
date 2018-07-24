@@ -93,13 +93,15 @@ def klip(trg, pcs, mask = None, klipK = None, cube = True, trg2D=True):
         pcs_flat = pcs[:klipK]
 
     coef = np.transpose(np.dot(pcs_flat, np.transpose(trg_flat))[np.newaxis])
-    result_flat = np.dot(np.ones((klipK, 1)), 
-                    trg_flat[np.newaxis]) - np.dot(np.tril(np.ones((klipK, klipK))),
-                                               coef * pcs_flat)
+
     if cube == False:
-        temp_result = result_flat[klipK-1]
+        result_flat = trg_flat - np.sum(coef * pcs_flat, axis = 0)
+        temp_result = result_flat
         return temp_result.reshape(width, width_x) * std
     else:
+        result_flat = np.dot(np.ones((klipK, 1)), 
+                        trg_flat[np.newaxis]) - np.dot(np.tril(np.ones((klipK, klipK))),
+                                                   coef * pcs_flat)
         result = np.zeros((klipK, width, width_x))
         for i in range(klipK):
             temp_result =  result_flat[i]
