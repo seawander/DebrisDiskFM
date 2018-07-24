@@ -44,7 +44,7 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
     param_hd191089['#Maps']['row3']['distance'] = dist
 
 
-    param_hd191089['#Density structure']['zone0']['row1']['gas-to-dust ratio'] = 0
+    param_hd191089['#Density structure']['zone0']['row1']['gas-to-dust mass ratio'] = 0
     param_hd191089['#Density structure']['zone0']['row2']['reference radius'] = 45.3
     param_hd191089['#Density structure']['zone0']['row2']['scale height'] = 1.812
     param_hd191089['#Density structure']['zone0']['row2']['vertical profile exponent'] = 2
@@ -79,7 +79,7 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
                      'a_min', 'Q_powerlaw']
     if var_value is None:    
         var_value = [59.7, 70, 1e-7, 
-                         45.3, 20, 3.5,  3.5, 0.1,
+                         45.3, 20, 3.5,  -3.5, 0.1,
                         0.05, 0.9,
                         1.0, 3.5]
                         
