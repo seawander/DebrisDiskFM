@@ -1,7 +1,8 @@
-import mcfostParameterTemplate      # create a tempalte parameter file
 import copy                         # duplicate the parameter files
 import subprocess                   # run the parameter files
 import os                           # change directory
+
+from . import mcfostParameterTemplate      # create a tempalte parameter file
 
 def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, calcSED = True, calcImage = True):
     """This code generates and saves the MCFOST disk(s) to `paraPath` with given input parameters. 

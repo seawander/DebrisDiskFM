@@ -1,7 +1,8 @@
-import fm_klip
-import diskmodeling_Qr
 from astropy.io import fits
 import numpy as np
+from . import fm_klip
+from . import diskmodeling_Qr
+
 
 def lnlike_hd191089(path_obs = None, path_model = None):
     

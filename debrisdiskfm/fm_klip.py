@@ -1,7 +1,7 @@
 from astropy.io import fits
 import numpy as np
 
-import dependences
+from . import dependencies
 
 # returns the KLIPped model
 
@@ -116,7 +116,7 @@ def klip_fm_main(path = './test/', angles = None):
     if angles is None:
         angles = np.concatenate([[19.5699]*4, [49.5699]*4])
 
-    disk_rotated = dependences.rotateCube(disk_model, angle = angles, maskedNaN=True, outputMask=False)
+    disk_rotated = dependencies.rotateCube(disk_model, angle = angles, maskedNaN=True, outputMask=False)
     masks_rotated = np.ones(disk_rotated.shape)
     masks_rotated[np.where(np.isnan(disk_rotated))] = 0
     masks_rotated *= mask
@@ -129,7 +129,7 @@ def klip_fm_main(path = './test/', angles = None):
     mask_rotated_nan = np.ones(masks_rotated.shape)    
     mask_rotated_nan[np.where(masks_rotated==0)] = np.nan
 
-    results = dependences.rotateCube(results_rotated*mask_rotated_nan, mask = None, angle = -angles, maskedNaN=True, outputMask=False)
+    results = dependencies.rotateCube(results_rotated*mask_rotated_nan, mask = None, angle = -angles, maskedNaN=True, outputMask=False)
 
     mask_detorated_nan = np.ones(results.shape)
     mask_detorated_nan[np.where(np.isnan(results))] = np.nan
