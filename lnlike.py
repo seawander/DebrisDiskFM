@@ -38,9 +38,13 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         if psf_cut_hw is not None:
             psfs[0] = dependences.cutImage(psf_stis, psf_cut_hw) # a 7*7 PSF would need psf_cut_hw = 3 (then 3*2+1 = 7).
             psfs[1] = dependences.cutImage(psf_nicmos, psf_cut_hw) # a 7*7 PSF would need psf_cut_hw = 3
+            psfs[0] /= np.nansum(psfs[0])
+            psfs[1] /= np.nansum(psfs[1])
         else:
             psfs[0] = psf_stis
             psfs[1] = psf_nicmos
+            psfs[0] /= np.nansum(psfs[0])
+            psfs[1] /= np.nansum(psfs[1])
         
     stis_model = fits.getdata(path_model + 'data_0.5852/RT.fits.gz')
     stis_convolved = image_registration.fft_tools.convolve_nd.convolvend(stis_model, psfs[0])
