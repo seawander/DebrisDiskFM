@@ -1,5 +1,8 @@
 import numpy as np
 from scipy.ndimage.interpolation import rotate
+from scipy.interpolate import interp2d
+
+
 
 def addplanet(image, planet, orientat = None, starflux = 1, radius = None, angle = None, contrast=1, exptime=1, planetOnly = False, x_planet = None, y_planet = None, surroundingReplace = None):
     """

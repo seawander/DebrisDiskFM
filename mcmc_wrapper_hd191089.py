@@ -130,7 +130,7 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
     ###############################################################################################
 
     param_hd191089_stis = copy.deepcopy(param_hd191089)
-    stis_width = 316
+    stis_width = 315
     param_hd191089_stis['#Wavelength']['row3']['stokes parameters?'] = 'F'
     param_hd191089_stis['#Maps']['row0']['nx'] = stis_width
     param_hd191089_stis['#Maps']['row0']['ny'] = stis_width
