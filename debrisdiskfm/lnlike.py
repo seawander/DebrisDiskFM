@@ -1,8 +1,8 @@
-import fm_klip
-import diskmodeling_Qr
 from astropy.io import fits
 import numpy as np
-import dependences
+from . import fm_klip
+from . import diskmodeling_Qr
+from . import dependencies
 import image_registration
 import astropy.units as units
 
@@ -43,8 +43,8 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         psf_stis = fits.getdata(path_obs + 'STIS/calibrated/STIS_6440K_tinyTIM_oddSize.fits')
         psf_nicmos = fits.getdata(path_obs + 'NICMOS/calibrated/')
         if psf_cut_hw is not None:
-            psfs[0] = dependences.cutImage(psf_stis, psf_cut_hw) # a 7*7 PSF would need psf_cut_hw = 3 (then 3*2+1 = 7).
-            psfs[1] = dependences.cutImage(psf_nicmos, psf_cut_hw) # a 7*7 PSF would need psf_cut_hw = 3
+            psfs[0] = dependencies.cutImage(psf_stis, psf_cut_hw) # a 7*7 PSF would need psf_cut_hw = 3 (then 3*2+1 = 7).
+            psfs[1] = dependencies.cutImage(psf_nicmos, psf_cut_hw) # a 7*7 PSF would need psf_cut_hw = 3
             psfs[0] /= np.nansum(psfs[0])
             psfs[1] /= np.nansum(psfs[1])
         else:
