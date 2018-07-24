@@ -2,6 +2,7 @@ from astropy.io import fits
 import numpy as np
 
 from . import dependencies
+import image_registration
 
 # returns the KLIPped model
 
@@ -106,15 +107,22 @@ def klip(trg, pcs, mask = None, klipK = None, cube = True, trg2D=True):
         return result*std
 
 
-def klip_fm_main(path = './test/', angles = None):
+def klip_fm_main(path = './test/', angles = None, psf = None):
     disk_model = fits.getdata(path + 'data_1.12347/RT.fits.gz')[0, 0, 0]
-    disk_model[int((disk_model.shape[0]-1)/2)-2:int((disk_model.shape[0]-1)/2)+3,int((disk_model.shape[0]-1)/2)-2:int((disk_model.shape[0]-1)/2)+3] = 0
+    disk_model[int((disk_model.shape[0]-1)/2)-2:int((disk_model.shape[0]-1)/2)+3, int((disk_model.shape[0]-1)/2)-2:int((disk_model.shape[0]-1)/2)+3] = 0
     # Exclude the star in the above line
+    if psf is not None:
+        if len(psf.shape) != 2:
+            raise  valueError('The input PSF is not 2D, please pass a 2D one here!')
+        psf /= np.nansum(psf)               #Normalize the PSF (planet PSF) in case the input is not equal to 1
+        convolved0 = image_registration.fft_tools.convolve_nd.convolvend(disk_model, psf)
+        disk_model = convolved0
+    
     
     components = fits.getdata('./data_observation/NICMOS/HD-191089_NICMOS_F110W_Lib-84_KL-19_KLmodes.fits')
     mask = fits.getdata('./data_observation/NICMOS/HD-191089_NICMOS_F110W_Lib-84_KL-19_Mask.fits')
     if angles is None:
-        angles = np.concatenate([[19.5699]*4, [49.5699]*4])
+        angles = np.concatenate([[19.5699]*4, [49.5699]*4]) # The values are hard coded for HD 191089 NICMOS observations, pelase change it for other targets.
 
     disk_rotated = dependencies.rotateCube(disk_model, angle = angles, maskedNaN=True, outputMask=False)
     masks_rotated = np.ones(disk_rotated.shape)
