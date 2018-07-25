@@ -109,7 +109,7 @@ def klip(trg, pcs, mask = None, klipK = None, cube = True, trg2D=True):
         return result*std
 
 
-def klip_fm_main(path = './test/', angles = None, psf = None):
+def klip_fm_main(path = './test/', angles = None, psf = None, pipeline_input = 'ALICE', alice_size = None):
     disk_model = fits.getdata(path + 'data_1.12347/RT.fits.gz')[0, 0, 0]
     disk_model[int((disk_model.shape[0]-1)/2)-2:int((disk_model.shape[0]-1)/2)+3, int((disk_model.shape[0]-1)/2)-2:int((disk_model.shape[0]-1)/2)+3] = 0
     # Exclude the star in the above line
@@ -132,12 +132,36 @@ def klip_fm_main(path = './test/', angles = None, psf = None):
     masks_rotated *= mask
 
     results_rotated = np.zeros(disk_rotated.shape)
+    
+    if pipeline_input == 'ALICE':
+        if alice_size is None:
+            alice_size = 140
+        # The ALICE pipeline has image of even size, and the center of the star is at the center of the image with the 1st row and 1st column cropped
+        # Solution as follows (create 140*140 or 80*80 images, with the 1st row and 1st column set to be all 0's)
+        disk_rotated_140 = np.zeros((disk_rotated.shape[0], alice_size, alice_size)) # make size = 140x140 images for KLIP
+        disk_rotated_140[:, 1:, 1:] = disk_rotated
+        
+        mask_rotated_140 = np.zeros(disk_rotated_140.shape)
+        mask_rotated_140[:, 1:, 1:] = mask_rotated
+        
+        disk_rotated = disk_rotated_140
+        del disk_rotated_140
+        mask_rotated = mask_rotated_140
+        del mask_rotated_140
 
     for i, data_slice in enumerate(disk_rotated):
         results_rotated[i] = klip(data_slice, pcs = components[i], mask = masks_rotated[i], cube=False)
 
     mask_rotated_nan = np.ones(masks_rotated.shape)    
     mask_rotated_nan[np.where(masks_rotated==0)] = np.nan
+    
+    if pipeline_input == 'ALICE':
+        results_rotated_old = results_rotated[:, 1:, 1:]
+        results_rotated = results_rotated_old
+        del results_rotated_old
+        mask_rotated_nan_old = mask_rotated_nan[:, 1:, 1:]
+        mask_rotated_nan = mask_rotated_nan_old
+        del mask_rotated_nan_old
 
     results = dependencies.rotateCube(results_rotated*mask_rotated_nan, mask = None, angle = -angles, maskedNaN=True, outputMask=False)
 
