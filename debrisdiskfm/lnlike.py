@@ -20,19 +20,24 @@ def convertMCFOSTdataToJy(data, wavelength, spatialUnit = 'arcsec', spatialResol
     data_with_units_jy = (data_with_units/frequency).to(units.Jansky/units.pixel)   # convert to Jansky/pixel
     if spatialUnit == 'arcsec':
         data_with_units_jy /= spatialResolution**2                                  # convert to Jansky/arcsec^2
-    return data_with_units_jy
+    return data_with_units_jy.value
     
-def chi2(data, data_unc, model):
-    """Calculate the chi-squared values for given data and model. 
+def chi2(data, data_unc, model, lnlike = True):
+    """Calculate the chi-squared value or log-likelihood for given data and model. 
     Note: if data_unc has values <= 0, they will be ignored and replaced by NaN.
     Input:  data: 2D array, observed data.
             data_unc: 2D array, uncertainty/noise map of the observed data.
-    Output: chi2: float, chi-squared value."""
+            lnlike: boolean, if True, then the log-likelihood is returned.
+    Output: chi2: float, chi-squared or log-likelihood value."""
     data_unc[np.where(data_unc <= 0)] = np.nan
     chi2 = np.nansum(((data-model)/data_unc)**2)
+    if lnlike:
+        loglikelihood = -0.5*np.log(2*np.pi)*np.count_nonzero(~np.isnan(data_unc)) - 0.5*chi2 - np.nansum(np.log(data_unc))
+        # -n/2*log(2pi) - 1/2 * chi2 - sum_i(log sigma_i) 
+        return loglikelihood
     return chi2
 
-def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw = 3):
+def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw = None):
     """Return the log-likelihood for observed data and modelled data.
     Input:  path_obs: the path to the observed data
             path_model: the path to the (forwarded) models
@@ -80,18 +85,25 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         
     # convert the MCFOST units to Jy/arcsec^2, and calculate individual chi2
     stis_model = fits.getdata(path_model + 'data_0.5852/RT.fits.gz')[0, 0, 0]
+    stis_model[int((stis_model.shape[0]-1)/2)-2:int((stis_model.shape[0]-1)/2)+3, int((stis_model.shape[1]-1)/2)-2:int((stis_model.shape[1]-1)/2)+3] = 0
     stis_convolved = image_registration.fft_tools.convolve_nd.convolvend(stis_model, psfs[0])
     stis_model = convertMCFOSTdataToJy(stis_convolved, wavelength = 0.5852, spatialResolution = resolution_stis) #convert to Jansky/arscec^2
-    chi2_stis = chi2(nicmos_obs, stis_obs_unc, stis_model) #return chi-squared value for STIS
+    fits.writeto('/Users/binren/Desktop/test1.fits', stis_model, clobber = True)
+    
+    chi2_stis = chi2(stis_obs, stis_obs_unc, stis_model, lnlike = True) #return loglikelihood value for STIS
     
     nicmos_model_forwarded = fm_klip.klip_fm_main(path = path_model, angles= None, psf = psfs[1]) # already convolved
     nicmos_model = convertMCFOSTdataToJy(nicmos_model_forwarded, wavelength = 1.12347, spatialResolution = resolution_nicmos) #convert to Jansky/arscec^2
-    chi2_nicmos = chi2(nicmos_obs_unc, nicmos_obs_unc, nicmos_model) #return chi-squared value for NICMOS
+    chi2_nicmos = chi2(nicmos_obs_unc, nicmos_obs_unc, nicmos_model, lnlike = True) #return loglikelihood value for NICMOS
+    fits.writeto('/Users/binren/Desktop/test2.fits', nicmos_model, clobber = True)
     
     
-    gpi_model = diskmodeling_Qr.diskmodeling_Qr_main(path = path_model, fwhm = 3.8) 
+    
+    gpi_model = diskmodeling_Qr.diskmodeling_Qr_main(path = path_model, fwhm = 3.8)
     # FWHM = 3.8 for GPI, as provided in Tom Esposito's HD35841 paper (Section: MCMC Modeling Procedure)
     gpi_model = convertMCFOSTdataToJy(gpi_model, wavelength = 1.65, spatialResolution = resolution_gpi) #convert to Jansky/arscec^2
-    chi2_gpi = chi2(gpi_obs, gpi_obs_unc, gpi_model)  #return chi-squared value for GPI
+    chi2_gpi = chi2(gpi_obs, gpi_obs_unc, gpi_model, lnlike = True) #return loglikelihood value for GPI
+    fits.writeto('/Users/binren/Desktop/test3.fits', gpi_model, clobber = True)
+    
     
     return -0.5*(chi2_stis+chi2_nicmos+chi2_gpi) #TBD: This is chi2, not loglikelihood yet.
