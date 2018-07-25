@@ -129,9 +129,9 @@ def klip_fm_main(path = './test/', angles = None, psf = None, pipeline_input = '
     disk_rotated = dependencies.rotateCube(disk_model, angle = angles, maskedNaN=True, outputMask=False)
     masks_rotated = np.ones(disk_rotated.shape)
     masks_rotated[np.where(np.isnan(disk_rotated))] = 0
+    if pipeline_input == 'ALICE':
+        mask = mask[1:, 1:]
     masks_rotated *= mask
-
-    results_rotated = np.zeros(disk_rotated.shape)
     
     if pipeline_input == 'ALICE':
         if alice_size is None:
@@ -142,13 +142,15 @@ def klip_fm_main(path = './test/', angles = None, psf = None, pipeline_input = '
         disk_rotated_140[:, 1:, 1:] = disk_rotated
         
         mask_rotated_140 = np.zeros(disk_rotated_140.shape)
-        mask_rotated_140[:, 1:, 1:] = mask_rotated
+        mask_rotated_140[:, 1:, 1:] = masks_rotated
         
         disk_rotated = disk_rotated_140
         del disk_rotated_140
-        mask_rotated = mask_rotated_140
+        masks_rotated = mask_rotated_140
         del mask_rotated_140
-
+        
+    results_rotated = np.zeros(disk_rotated.shape)    
+    
     for i, data_slice in enumerate(disk_rotated):
         results_rotated[i] = klip(data_slice, pcs = components[i], mask = masks_rotated[i], cube=False)
 
@@ -169,6 +171,14 @@ def klip_fm_main(path = './test/', angles = None, psf = None, pipeline_input = '
     mask_detorated_nan[np.where(np.isnan(results))] = np.nan
 
     result_klip = np.nansum(results, axis = 0)/np.nansum(mask_detorated_nan, axis = 0)
+    
+    if pipeline_input == 'ALICE':
+        if alice_size is None:
+            alice_size = 140
+        result_klip_alice = np.zeros((alice_size, alice_size))
+        result_klip_alice[1:, 1:] = result_klip
+        result_klip = result_klip_alice
+        del result_klip_alice   
     
     return result_klip
 
