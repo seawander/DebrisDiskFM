@@ -5,6 +5,7 @@ from . import diskmodeling_Qr
 from . import dependencies
 import image_registration
 import astropy.units as units
+from . import lnprior
 
 def convertMCFOSTdataToJy(data, wavelength, spatialUnit = 'arcsec', spatialResolution = None):
     """Convert data in MCFOST units into Jansky/pixel or Jansky/arcsec^2:
@@ -14,7 +15,7 @@ def convertMCFOSTdataToJy(data, wavelength, spatialUnit = 'arcsec', spatialResol
             spatialResolution: float, unit is arcsec/pixel. This will be used to convert the units to arcsec^{-2}.
     Output: converted data.
     """
-    data_with_units = data_units*units.W/units.m**2/units.pixel
+    data_with_units = data*units.W/units.m**2/units.pixel
     frequency = ((3e8*units.m/units.s)/(wavelength*units.micron)).to(units.hertz)
     data_with_units_jy = (data_with_units/frequency).to(units.Jansky/units.pixel)   # convert to Jansky/pixel
     if spatialUnit == 'arcsec':
@@ -38,8 +39,6 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
             psfs: the point spread functions for forward modeling to simulate instrument response
             psf_cut_hw: the half-width of the PSFs if you would like to cut them to smaller sizes (size = 2*hw + 1)
             """
-    
-    
     ### Observations:
     if path_obs is None:
         path_obs = './data_observation/'
@@ -51,8 +50,8 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     nicmos_obs_unc = fits.getdata(path_obs + 'NICMOS/calibrated/HD-191089_NICMOS_F110W_Lib-84_KL-19_NoiseMap.fits')
     nicmos_obs_unc[np.where(nicmos_obs_unc <=0)] = np.nan
     
-    gpi_obs = fits.getdata(path_obs + 'GPI/hd191089_gpi_smooth_mJy_arcsec2.fits')/1e3 #Turn it to Jy/arcsec^2
-    gpi_obs_unc = fits.getdata(path_obs + 'GPI/hd191089_gpi_smooth_mJy_arcsec2_noisemap.fits')/1e3 #Turn it to Jy/arcsec^2
+    gpi_obs = fits.getdata(path_obs + 'GPI/calibrated/hd191089_gpi_smooth_mJy_arcsec2.fits')/1e3 #Turn it to Jy/arcsec^2
+    gpi_obs_unc = fits.getdata(path_obs + 'GPI/calibrated/hd191089_gpi_smooth_mJy_arcsec2_noisemap.fits')/1e3 #Turn it to Jy/arcsec^2
     gpi_obs_unc[np.where(gpi_obs_unc <=0)] = np.nan
     
     resolution_stis = 0.05078 # arcsec/pixel
@@ -64,7 +63,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         path_model = './test/'
     if psfs is None:
         psf_stis = fits.getdata(path_obs + 'STIS/calibrated/STIS_6440K_tinyTIM_oddSize.fits')
-        psf_nicmos = fits.getdata(path_obs + 'NICMOS/calibrated/')
+        psf_nicmos = fits.getdata(path_obs + 'NICMOS/calibrated/NICMOS_Era2_F110W_oddSize.fits')
         psfs = [psf_stis, psf_nicmos]
         
         if psf_cut_hw is not None:
