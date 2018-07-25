@@ -16,6 +16,6 @@ from . import lnlike
 #
 #     sampler = EnsembleSampler(nwalkers = n_walkers, dim = n_dim, lnpostfn = lnlike.lnlike_hd191089)
 
-from . import mcmc_wrapper_hd191089
+from . import mcfostRun
 
 # mcmc_wrapper_hd191089.mcmc_wrapper_hd191089()
