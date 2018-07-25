@@ -73,57 +73,103 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
     ##################################### Section 2: Variables ####################################
     ############# parameters that vary, this section is used for MCMC modeling purposes ###########
     ###############################################################################################
-
-    if var_names is None:
-        var_names = ['inc', 'PA', 'm_disk', 
+    var_names_all = ['inc', 'PA', 'm_disk', 
                      'Rc', 'R_in', 'alpha_in', 'alpha_out', 'porosity', 
                      'fmass_0', 'fmass_1', 
                      'a_min', 'Q_powerlaw']
+    var_values_all = [59.7, 70, -7, 
+                     45.3, 20, 3.5,  -5, 0.95,
+                    0.3, 0.3,
+                    1.0, 3.5]
+    if var_names is None:
+        var_names = var_names_all    #The above treatment allows for small paramter searching
     if var_values is None:    
-        var_values = [59.7, 70, 1e-7, 
-                         45.3, 20, 3.5,  -5, 0.95,
-                        0.3, 0.3,
-                        1.0, 3.5]
+        var_values = var_values_all
                         
     # The MCFOST definition of inclination and position angle is not what we have been using.
 
     theta = dict(zip(var_names, var_values))
+    theta_all = dict(zip(var_names_all, var_values_all))
 
-    for var_name in var_names:
+    for var_name in var_names_all:
         if var_name == 'inc':
-            param_hd191089['#Maps']['row1']['imin'] = 180 - theta[var_name]
-            param_hd191089['#Maps']['row1']['imax'] = 180 - theta[var_name]
+            if var_name in var_names:
+                param_hd191089['#Maps']['row1']['imin'] = 180 - theta[var_name]
+                param_hd191089['#Maps']['row1']['imax'] = 180 - theta[var_name]
+            else:
+                param_hd191089['#Maps']['row1']['imin'] = 180 - theta_all[var_name]
+                param_hd191089['#Maps']['row1']['imax'] = 180 - theta_all[var_name]
             # Convert our definition to the MCFOST definition of inclination
         elif var_name == 'PA':
-            param_hd191089['#Maps']['row4']['disk PA'] = 90 - theta[var_name]
+            if var_name in var_names:
+                param_hd191089['#Maps']['row4']['disk PA'] = 90 - theta[var_name]
+            else:
+                param_hd191089['#Maps']['row4']['disk PA'] = 90 - theta_all[var_name]
             # Convert our definition to the MCFOST definition of position angle
         elif var_name == 'm_disk':
-            param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = theta[var_name]
+            if var_name in var_names:
+                param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = 10**theta[var_name]
+            else:
+                param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = 10**theta_all[var_name]
         elif var_name == 'Rc':
-            param_hd191089['#Density structure']['zone0']['row3']['Rc'] = theta[var_name]
-            param_hd191089['#Density structure']['zone0']['row3']['Rout'] = 130*resolution_stis*dist # extent of the outer halo
+            if var_name in var_names:
+                param_hd191089['#Density structure']['zone0']['row3']['Rc'] = theta[var_name]
+                param_hd191089['#Density structure']['zone0']['row3']['Rout'] = 130*resolution_stis*dist # extent of the outer halo
+            else:
+                param_hd191089['#Density structure']['zone0']['row3']['Rc'] = theta_all[var_name]
+                param_hd191089['#Density structure']['zone0']['row3']['Rout'] = 130*resolution_stis*dist # extent of the outer halo
         elif var_name == 'R_in':
-            param_hd191089['#Density structure']['zone0']['row3']['Rin'] = theta[var_name]
+            if var_name in var_names:
+                param_hd191089['#Density structure']['zone0']['row3']['Rin'] = theta[var_name]
+            else:
+                param_hd191089['#Density structure']['zone0']['row3']['Rin'] = theta_all[var_name]
         elif var_name == 'alpha_in':
-            param_hd191089['#Density structure']['zone0']['row5']['surface density exponent/alpha_in'] = theta[var_name]
+            if var_name in var_names:
+                param_hd191089['#Density structure']['zone0']['row5']['surface density exponent/alpha_in'] = theta[var_name]
+            else:
+                param_hd191089['#Density structure']['zone0']['row5']['surface density exponent/alpha_in'] = theta_all[var_name]
         elif var_name == 'alpha_out':
-            param_hd191089['#Density structure']['zone0']['row5']['-gamma_exp/alpha_out'] = theta[var_name]
+            if var_name in var_names:
+                param_hd191089['#Density structure']['zone0']['row5']['-gamma_exp/alpha_out'] = theta[var_name]
+            else:
+                param_hd191089['#Density structure']['zone0']['row5']['-gamma_exp/alpha_out'] = theta_all[var_name]
         elif var_name == 'porosity':
-            param_hd191089['#Grain properties']['zone0']['species0']['row0']['porosity'] = theta[var_name]
-            param_hd191089['#Grain properties']['zone0']['species1']['row0']['porosity'] = theta[var_name]
-            param_hd191089['#Grain properties']['zone0']['species2']['row0']['porosity'] = theta[var_name]
+            if var_name in var_names:
+                param_hd191089['#Grain properties']['zone0']['species0']['row0']['porosity'] = theta[var_name]
+                param_hd191089['#Grain properties']['zone0']['species1']['row0']['porosity'] = theta[var_name]
+                param_hd191089['#Grain properties']['zone0']['species2']['row0']['porosity'] = theta[var_name]
+            else:
+                param_hd191089['#Grain properties']['zone0']['species0']['row0']['porosity'] = theta_all[var_name]
+                param_hd191089['#Grain properties']['zone0']['species1']['row0']['porosity'] = theta_all[var_name]
+                param_hd191089['#Grain properties']['zone0']['species2']['row0']['porosity'] = theta_all[var_name]                    
         elif var_name == 'fmass_0':
-            param_hd191089['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta[var_name], 3)
-            param_hd191089['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta['fmass_1'], 3)
-            param_hd191089['#Grain properties']['zone0']['species2']['row0']['mass fraction'] = round(1 - theta[var_name] - theta['fmass_1'], 3)
+            if var_name in var_names:
+                param_hd191089['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta['fmass_1'], 3)
+                param_hd191089['#Grain properties']['zone0']['species2']['row0']['mass fraction'] = round(1 - theta[var_name] - theta['fmass_1'], 3)
+            else:
+                param_hd191089['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta_all[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta_all['fmass_1'], 3)
+                param_hd191089['#Grain properties']['zone0']['species2']['row0']['mass fraction'] = round(1 - theta_all[var_name] - theta_all['fmass_1'], 3)
+                
         elif var_name == 'a_min':
-            param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = theta[var_name]
-            param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = theta[var_name]
-            param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = theta[var_name]
+            if var_name in var_names:
+                param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = theta[var_name]
+                param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = theta[var_name]
+                param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = theta[var_name]
+            else:
+                param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = theta_all[var_name]
+                param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = theta_all[var_name]
+                param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = theta_all[var_name]
         elif var_name == 'Q_powerlaw':
-            param_hd191089['#Grain properties']['zone0']['species0']['row3']['aexp'] = theta[var_name]
-            param_hd191089['#Grain properties']['zone0']['species1']['row3']['aexp'] = theta[var_name]
-            param_hd191089['#Grain properties']['zone0']['species2']['row3']['aexp'] = theta[var_name]
+            if var_name in var_names:
+                param_hd191089['#Grain properties']['zone0']['species0']['row3']['aexp'] = theta[var_name]
+                param_hd191089['#Grain properties']['zone0']['species1']['row3']['aexp'] = theta[var_name]
+                param_hd191089['#Grain properties']['zone0']['species2']['row3']['aexp'] = theta[var_name]
+            else:
+                param_hd191089['#Grain properties']['zone0']['species0']['row3']['aexp'] = theta_all[var_name]
+                param_hd191089['#Grain properties']['zone0']['species1']['row3']['aexp'] = theta_all[var_name]
+                param_hd191089['#Grain properties']['zone0']['species2']['row3']['aexp'] = theta_all[var_name]
 
 
     ###############################################################################################
