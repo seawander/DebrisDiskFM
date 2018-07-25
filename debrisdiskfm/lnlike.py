@@ -100,4 +100,4 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     chi2_gpi = chi2(gpi_obs, gpi_obs_unc, gpi_model, lnlike = True) #return loglikelihood value for GPI
     
     
-    return -0.5*(chi2_stis+chi2_nicmos+chi2_gpi) #TBD: This is chi2, not loglikelihood yet.
+    return (chi2_stis+chi2_nicmos+chi2_gpi) #Returns the loglikelihood
