@@ -138,7 +138,7 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
     param_hd191089_stis['#Maps']['row0']['size'] = dist * stis_width * resolution_stis
 
     param_hd191089_nicmos = copy.deepcopy(param_hd191089)
-    nicmos_width = 140
+    nicmos_width = 139
     param_hd191089_nicmos['#Wavelength']['row3']['stokes parameters?'] = 'F'
     param_hd191089_nicmos['#Maps']['row0']['nx'] = nicmos_width
     param_hd191089_nicmos['#Maps']['row0']['ny'] = nicmos_width
@@ -151,23 +151,24 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
     param_hd191089_gpi['#Maps']['row0']['nx'] = gpi_width
     param_hd191089_gpi['#Maps']['row0']['ny'] = gpi_width
     param_hd191089_gpi['#Maps']['row0']['size'] = dist * gpi_width * resolution_gpi
-    
+
     if paraPath is None:
-        paraPath = './'
+        paraPath = './mcfost_models/'
+
+    if os.path.exists(paraPath):
+        import shutil
+        shutil.rmtree(paraPath)         # Delete the folder if it exists to avoid duplicated computing
+        os.mkdir(paraPath) 
     else:
-        if os.path.exists(paraPath):
-            import shutil
-            shutil.rmtree(paraPath)         # Delete the folder if it exists to avoid duplicated computing
-            os.mkdir(paraPath) 
-        else:
-            os.mkdir(paraPath)              # Create the folder if it does not exist.
+        os.mkdir(paraPath)              # Create the folder if it does not exist.
+        
     currentDirectory = os.getcwd()          # Get current working directory, and jump back at the end
     os.chdir(paraPath)                      # Now everthing is stored in the `paraPath` folder.
     
     mcfostParameterTemplate.display_file(param_hd191089_stis, 'hd191089_stis.para')
     mcfostParameterTemplate.display_file(param_hd191089_nicmos, 'hd191089_nicmos.para')
     mcfostParameterTemplate.display_file(param_hd191089_gpi, 'hd191089_gpi.para')
-
+    
     ###############################################################################################
     ####################################### Section 4: Run ########################################
     ############################# Run the parameters and save the outputs. ########################
