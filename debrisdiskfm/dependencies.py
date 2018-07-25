@@ -202,7 +202,7 @@ def rotateCube(cube, mask = None, angle = None, reshape = False, new_width = Non
     Example:
         results, masks = rotateCube(data, mask= mask, angle=-angles, maskedNaN= True, reshape=True)
     """
-    print("Rotating a cube...")
+    #print("Rotating a cube...")
     cube0 = np.copy(cube)
     # cube0[np.where(np.isnan(cube0))] = 0
     mask0 = np.copy(mask)
@@ -215,20 +215,20 @@ def rotateCube(cube, mask = None, angle = None, reshape = False, new_width = Non
     angle = np.asarray(angle)  
     
     if len(cube0.shape) == 2:
-        print("\tJust one input image, look easy.")
+        #print("\tJust one input image, look easy.")
         #single image
         if len(angle) != 1:
-            print("\t\tBut with multiple angles, start working...")
+            #print("\t\tBut with multiple angles, start working...")
             #multiple angles
             if (mask is None) or (len(mask.shape) == 2):
-                print("\t\t\t Just one input mask (or none), duplicating to make a mask cube.")
+                #print("\t\t\t Just one input mask (or none), duplicating to make a mask cube.")
                 #if single mask, then make multiple masks
                 mask = np.asarray([mask0] * len(angle))
                 
             #calculation
             if outputMask:
                 #need rotated masks
-                print("\t\t\t\t Rotating...")
+                #print("\t\t\t\t Rotating...")
                 for i in range(len(angle)):
                     results_temp, rotatedMask_temp = rotateImage(cube, mask = mask[i], angle = angle[i], reshape = reshape,
                                                              new_width = new_width, new_height = new_height, thresh = thresh,
@@ -238,34 +238,34 @@ def rotateCube(cube, mask = None, angle = None, reshape = False, new_width = Non
                         rotatedMasks = np.zeros(results.shape)
                     results[i] = results_temp
                     rotatedMasks[i] = rotatedMask_temp
-                print("\t\t\t\t\t Done. Returning.")
+                #print("\t\t\t\t\t Done. Returning.")
                 return results, rotatedMasks
             else:
                 #don't need rotated masks
-                print("\t\t\t\t Rotating...")
+                #print("\t\t\t\t Rotating...")
                 for i in range(len(angle)):
-                    # print(i, cube.shape, mask, angle[i])
+                    # #print(i, cube.shape, mask, angle[i])
                     results_temp = rotateImage(cube, mask = mask[i], angle = angle[i], reshape = reshape,
                                              new_width = new_width, new_height = new_height, thresh = thresh,
                                              maskedNaN = maskedNaN, outputMask = outputMask, instrument = instrument)
                     if i == 0:
                         results = np.zeros((mask.shape[0], ) + results_temp.shape)
                     results[i] = results_temp
-                print("\t\t\t\t\t Done. Returning.")
+                #print("\t\t\t\t\t Done. Returning.")
                 return results
         else:
-            print("\t\tAnd just one angle, looks easier..")
+            #print("\t\tAnd just one angle, looks easier..")
             if (mask is None) or (len(mask.shape) == 2):
-                print("\t\t\t Yeah and there is only one mask or no mask. Hooray!")
+                #print("\t\t\t Yeah and there is only one mask or no mask. Hooray!")
                 if outputMask:
-                    print("\t\t\t\t Returning results and rotated masks.")
+                    #print("\t\t\t\t Returning results and rotated masks.")
                 else:
-                    print("\t\t\t\t Returning results.")
+                    #print("\t\t\t\t Returning results.")
                 return rotateImage(cube, mask = mask, angle = angle[0], reshape = reshape,
                                    new_width = new_width, new_height = new_height, thresh = thresh,
                                    maskedNaN = maskedNaN, outputMask = outputMask, instrument = instrument)
             else:
-                print("\t\t\t Hmmmmm, several masks, working on that...")
+                #print("\t\t\t Hmmmmm, several masks, working on that...")
                 if outputMask:
                     for i in range(mask.shape[0]):
                         results_temp, rotatedMask_temp = rotateImage(cube, mask = mask[i], angle = angle[0], reshape = reshape,
@@ -276,7 +276,7 @@ def rotateCube(cube, mask = None, angle = None, reshape = False, new_width = Non
                             rotatedMasks = np.zeros(results.shape)
                         results[i] = results_temp
                         rotatedMasks[i] = rotatedMask_temp
-                    print("\t\t\t\t Returning results and rotated masks.")
+                    #print("\t\t\t\t Returning results and rotated masks.")
                     return results, rotatedMasks
                 else:
                     for i in range(mask.shape[0]):
@@ -286,18 +286,18 @@ def rotateCube(cube, mask = None, angle = None, reshape = False, new_width = Non
                         if i == 0:
                             results = np.zeros((mask.shape[0], ) + results_temp.shape)
                         results[i] = results_temp
-                    print("\t\t\t\t Returning results.")
+                    #print("\t\t\t\t Returning results.")
                     return results
     elif len(cube0.shape) == 3:
-        print("\tOh the input is really an image cube, working...")
+        #print("\tOh the input is really an image cube, working...")
         if (mask is None) or (len(mask.shape) == 2):
-            print("\t\t Just one input mask (or none), duplicating to make a mask cube.")
+            #print("\t\t Just one input mask (or none), duplicating to make a mask cube.")
             #if single mask, then make multiple masks
             mask = np.asarray([mask0] * cube0.shape[0])
         if len(angle) == 1:
-            print("\t\t Just one input angle (or none), duplicating to make a mask cube.")
+            #print("\t\t Just one input angle (or none), duplicating to make a mask cube.")
             angle = np.asarray([angle[0]] * cube0.shape[0])
-        print("\t\t\t Rotating...")
+        #print("\t\t\t Rotating...")
         
         if outputMask:
             for i in range(cube0.shape[0]):
@@ -309,7 +309,7 @@ def rotateCube(cube, mask = None, angle = None, reshape = False, new_width = Non
                     rotatedMasks = np.zeros(results.shape)
                 results[i] = results_temp
                 rotatedMasks[i] = rotatedMask_temp
-            print("\t\t\t\t Returning results and rotated masks.")
+            #print("\t\t\t\t Returning results and rotated masks.")
             return results, rotatedMasks
         else:
             for i in range(cube0.shape[0]):
@@ -319,5 +319,5 @@ def rotateCube(cube, mask = None, angle = None, reshape = False, new_width = Non
                 if i == 0:
                     results = np.zeros((mask.shape[0], ) + results_temp.shape)
                 results[i] = results_temp
-            print("\t\t\t\t Returning results.")
+            #print("\t\t\t\t Returning results.")
             return results     
