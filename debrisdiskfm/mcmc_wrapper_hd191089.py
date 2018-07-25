@@ -3,6 +3,7 @@ import subprocess                   # run the parameter files
 import os                           # change directory
 
 from . import mcfostParameterTemplate      # create a tempalte parameter file
+from glob import glob
 
 def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, calcSED = True, calcImage = True):
     """This code generates and saves the MCFOST disk(s) to `paraPath` with given input parameters. 
@@ -156,9 +157,10 @@ def mcmc_wrapper_hd191089(var_names = None, var_value = None, paraPath = None, c
         paraPath = './mcfost_models/'
 
     if os.path.exists(paraPath):
+        foldernames = glob(paraPath + 'data_[0-9]*') # glob the images only, keep the SED profile
         import shutil
-        shutil.rmtree(paraPath)         # Delete the folder if it exists to avoid duplicated computing
-        os.mkdir(paraPath) 
+        for foldername in foldernames:
+            shutil.rmtree(foldername)         # Delete the image folders if it exists to avoid duplicated computing
     else:
         os.mkdir(paraPath)              # Create the folder if it does not exist.
         
