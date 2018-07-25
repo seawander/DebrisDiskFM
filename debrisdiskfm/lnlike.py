@@ -43,6 +43,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
             path_model: the path to the (forwarded) models
             psfs: the point spread functions for forward modeling to simulate instrument response
             psf_cut_hw: the half-width of the PSFs if you would like to cut them to smaller sizes (size = 2*hw + 1)
+    Output: log-likelihood
             """
     ### Observations:
     if path_obs is None:
