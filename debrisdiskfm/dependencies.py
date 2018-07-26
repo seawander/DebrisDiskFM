@@ -202,7 +202,7 @@ def rotateCube(cube, mask = None, angle = None, reshape = False, new_width = Non
     Example:
         results, masks = rotateCube(data, mask= mask, angle=-angles, maskedNaN= True, reshape=True)
     """
-    print("Rotating a cube...")
+    # print("Rotating a cube...")
     cube0 = np.copy(cube)
     # cube0[np.where(np.isnan(cube0))] = 0
     mask0 = np.copy(mask)
