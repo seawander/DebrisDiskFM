@@ -3,7 +3,7 @@ from . import lnlike
 from . import mcfostRun
 import numpy as np
 
-def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False):
+def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False, hash_address = True):
     """Returns the log-posterior probability (post = prior * likelihood, thus lnpost = lnprior + lnlike)
     for a given parameter combination.
     Input:  var_values: number array, values for var_names. Refer to mcfostRun() for details. 
@@ -16,8 +16,8 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
     ln_prior = lnprior.lnprior_hd191089(var_names = var_names, var_values = var_values)
     if not np.isfinite(ln_prior):
         return -np.inf
-    run_flag = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True)
+    run_flag = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address)
     if not (run_flag == 0):             #run is not sucessful
         return -np.inf
-    ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model)
+    ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, var_values = var_values, hash_address = hash_address)
     return ln_prior + ln_likelihood
