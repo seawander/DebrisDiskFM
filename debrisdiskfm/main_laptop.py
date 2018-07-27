@@ -15,9 +15,8 @@ var_names = np.array(['inc', 'PA', 'm_disk', 'Rc']) # Parameters of interest, th
 var_values_init = np.array([59.7, 70, -7, 45.3])    # Initial guesses for the above parameters, the following line is for all the parameters
 # var_values_init = np.array([59.7, 70, 1e-7, 45.3, 20, 3.5,  -3.5, 0.1, 0.05, 0.9, 1.0, 3.5])
 
-chi2_initial = lnpost_hd191089(var_values=var_values_init, var_names=var_names, path_obs=path_obs, path_model=path_model, calcSED=True)
-# The above line calculates the SED to make sure MCMC can run in the "image-only" mode, as in the following line
-chi2_model = lnpost_hd191089(var_values=var_values_init, var_names=var_names, path_obs=path_obs, path_model=path_model)#, calcSED=False)
+lnpost_initial = lnpost_hd191089(var_values=var_values_init, var_names=var_names, path_obs=path_obs, path_model=path_model, calcSED=True, hash_address = False)# The above line calculates the SED to make sure MCMC can run in the "image-only" mode, as in the following line
+lnpost_mcmc = lnpost_hd191089(var_values=var_values_init, var_names=var_names, path_obs=path_obs, path_model=path_model, hash_address=True)#, calcSED=False)
 
 n_dim = len(var_values_init)    # number of variables
 n_walkers = int(2*n_dim)              # an even number (>= 2*n_dim)
