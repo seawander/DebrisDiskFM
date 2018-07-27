@@ -6,6 +6,7 @@ from . import dependencies
 import image_registration
 import astropy.units as units
 from . import lnprior
+import shutil
 
 def convertMCFOSTdataToJy(data, wavelength, spatialUnit = 'arcsec', spatialResolution = None):
     """Convert data in MCFOST units into Jansky/pixel or Jansky/arcsec^2:
@@ -37,7 +38,7 @@ def chi2(data, data_unc, model, lnlike = True):
         return loglikelihood
     return chi2
 
-def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw = None):
+def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw = None, var_values = None, hash_address = False, delete_model = True):
     """Return the log-likelihood for observed data and modelled data.
     Input:  path_obs: the path to the observed data
             path_model: the path to the (forwarded) models
@@ -67,6 +68,10 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     ### (Forwarded) Models:
     if path_model is None:
         path_model = './test/'
+    if hash_address:
+        hash_string = str(hash(np.array2string(np.array(var_values))))
+        path_model = path_model[:-1] + hash_string + '/'
+        
     if psfs is None:
         psf_stis = fits.getdata(path_obs + 'STIS/calibrated/STIS_6440K_tinyTIM_oddSize.fits')
         psf_nicmos = fits.getdata(path_obs + 'NICMOS/calibrated/NICMOS_Era2_F110W_oddSize.fits')
@@ -103,5 +108,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     gpi_model = convertMCFOSTdataToJy(gpi_model, wavelength = 1.65, spatialResolution = resolution_gpi) #convert to Jansky/arscec^2
     chi2_gpi = chi2(gpi_obs, gpi_obs_unc, gpi_model, lnlike = True) #return loglikelihood value for GPI
     # fits.writeto('/Users/binren/Desktop/test3.fits', gpi_model, clobber = True)
+    if hash_address and delete_model:    #delete the temporary MCFOST models
+        shutil.rmtree(path_model) 
     
     return (chi2_stis+chi2_nicmos+chi2_gpi) #Returns the loglikelihood
