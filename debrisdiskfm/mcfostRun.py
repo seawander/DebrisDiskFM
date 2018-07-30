@@ -227,9 +227,10 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
         os.mkdir(paraPath_hash)
         
         if calcImage and (not (calcSED)):
-
-            subprocess.call('cp -r ' + paraPath + 'data_th ' + paraPath_hash + '.', shell = True)
-            subprocess.call('cp ' + paraPath + '_dust_prop_th.tmp ' + paraPath_hash + '.', shell = True)
+            subprocess.call('ln -s ' + currentDirectory +'/mcfost_models/_dust_prop_th.tmp ' + paraPath_hash + '_dust_prop_th.tmp', shell = True)
+            subprocess.call('ln -s ' + currentDirectory +'/mcfost_models/data_th/ ' + paraPath_hash + 'data_th', shell = True)
+            # subprocess.call('cp -r ' + paraPath + 'data_th ' + paraPath_hash + '.', shell = True)
+            # subprocess.call('cp ' + paraPath + '_dust_prop_th.tmp ' + paraPath_hash + '.', shell = True)
             
         os.chdir(paraPath_hash) 
     else:
