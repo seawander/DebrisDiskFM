@@ -1,6 +1,6 @@
 ############ This code is adapted from
 ###### http://dfm.io/emcee/current/user/line/
-###### to demonstrate the MPI capability of EMCEE
+###### to demonstrate the MPI capability of EMCEE with line fitting
 
 import matplotlib
 matplotlib.use('Agg')
