@@ -1,0 +1,11 @@
+The files in this folder is to make sure your MPI code of MCMC works in a Slurm cluster.
+
+Python scripts:
+    1. ``test.py'' is a single-core calcuation of MCMC
+    2. ``test_mpi.py'' is an MPI calculation of MCMC
+
+Submit ``test.py'' with
+``sbatch slurm_job_example_single_core''
+
+Submit ``test_mpi.py'' with
+``sbatch slurm_job_example_single_core''

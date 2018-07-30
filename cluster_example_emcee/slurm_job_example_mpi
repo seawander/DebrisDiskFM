@@ -1,0 +1,24 @@
+#!/bin/bash -l
+
+#SBATCH --partition=parallel,shared,lrgmem,unlimited,debug
+#SBATCH --job-name=emcee_cluster
+##SBATCH --dependency=afterok:8994369 #double ``#'' means this will be ignored
+#SBATCH --time=1:25:0
+#SBATCH --nodes=2                     # request 2 nodes
+#SBATCH --ntasks-per-node=6           # request 6 tasks on each node for calculation
+#SBATCH --cpus-per-task=4             # request 4 cores for each task
+##SBATCH --mail-type=end              # send an email after the job is ended to the account on next line?
+##SBATCH --mail-user=your_account@your_email_host.com
+#SBATCH --mem=10G
+
+export MKL_NUM_THREADS=4              # request 4 cores for python numpy calculations
+mpiexec -n 12 python3  -W ignore test_mpi.py    
+                                      # ``-n 12'' right after ``mpiexec'' is equalt to ``nodes''*``n_tasks-per-node''
+                                      # ``-W ignore'' will suppress the warning messages
+
+#### submit this job with the following command (ignore the ``#''s)
+#### sbatch slurm_job_example_mpi
+
+
+##### Expected Output #########
+##### 2 nodes * 6 tasks * 4 cores with MPI took 101.7 seconds
