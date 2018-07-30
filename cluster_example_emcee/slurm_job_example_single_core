@@ -6,7 +6,7 @@
 #SBATCH --time=1:25:0
 #SBATCH --nodes=1                     # request 1 nodes
 #SBATCH --ntasks-per-node=1           # request 1 task on the node for calculation
-#SBATCH --cpus-per-task=1             # request 1 core for the task
+#SBATCH --cpus-per-task=1             # request 1 core for the task, now we request only 1 core in this job example
 ##SBATCH --mail-type=end              # send an email after the job is ended to the account on next line?
 ##SBATCH --mail-user=your_account@your_email_host.com
 #SBATCH --mem=10G
