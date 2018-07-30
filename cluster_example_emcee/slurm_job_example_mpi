@@ -5,8 +5,8 @@
 ##SBATCH --dependency=afterok:8994369 #double ``#'' means this will be ignored
 #SBATCH --time=1:25:0
 #SBATCH --nodes=2                     # request 2 nodes
-#SBATCH --ntasks-per-node=6           # request 6 tasks on each node for calculation
-#SBATCH --cpus-per-task=4             # request 4 cores for each task
+#SBATCH --ntasks-per-node=6           # request 6 tasks on each node for calculation, now we request 2 * 6 = 12 tasks
+#SBATCH --cpus-per-task=4             # request 4 cores for each task, now we request 2 * 6 * 4 = 48 cores
 ##SBATCH --mail-type=end              # send an email after the job is ended to the account on next line?
 ##SBATCH --mail-user=your_account@your_email_host.com
 #SBATCH --mem=10G
