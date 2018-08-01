@@ -112,3 +112,28 @@ The default status is stored in ```filename```, you can change the variable in t
 The other parameters to change are: ```n_walkers``` which defines the number of walkers (10 times of the dimension or more is suggested), and ```step``` which denotes how many MCMC steps do you want to perform in *this* run.
 
 To extract the information from the backend file, such as the corner plot, please refer to the emcee [webpage](https://emcee.readthedocs.io/en/latest/tutorials/monitor/) for details.
+
+***Example: Deploy the code to a Slurm cluster with mpi4py***:
+Create a file named ```sub_mcmc_cluster```, with the contents: 
+```bash
+#!/bin/bash -l
+
+#SBATCH --partition=parallel
+#SBATCH --job-name=mcmc_cluster
+#SBATCH --time=0:10:0
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=6       
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=10G
+
+export MKL_NUM_THREADS=4
+mpiexec -n 12 python3 -W ignore main_cluster.py
+```
+which used 2 nodes, and 6 tasks on each node, with each task using 4 cores. Now submit it in the command line using
+
+```bash
+sbatch sub_mcmc_cluster
+```
+and wait for the results!
+
+For more detailed explanation of the script, please go to [DebrisDiskFM/cluster_example_emcee/](https://github.com/seawander/DebrisDiskFM/tree/master/cluster_example_emcee).
