@@ -1,8 +1,12 @@
-import numpy as np
-from astropy.io import fits
-import subprocess
+# This file is for placeholder and test purpose only, 
+# please refer to the main_laptop.py and main_cluster.py files for the detail codes
+
+
+#import numpy as np
+#from astropy.io import fits
+#import subprocess
 # from emcee import PTSampler, EnsembleSampler
-from . import lnlike
+#from . import lnlike
 
 # def main_hd191089():
 #     """Main function for MCMC modeling of HD191089 debris disk system."""
@@ -16,6 +20,6 @@ from . import lnlike
 #
 #     sampler = EnsembleSampler(nwalkers = n_walkers, dim = n_dim, lnpostfn = lnlike.lnlike_hd191089)
 
-from . import mcfostRun
+#from . import mcfostRun
 
 # mcmc_wrapper_hd191089.mcmc_wrapper_hd191089()
