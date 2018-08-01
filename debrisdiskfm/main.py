@@ -1,7 +1,7 @@
 import numpy as np
 from astropy.io import fits
 import subprocess
-from emcee import PTSampler, EnsembleSampler
+# from emcee import PTSampler, EnsembleSampler
 from . import lnlike
 
 # def main_hd191089():
