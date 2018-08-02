@@ -22,15 +22,18 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
         else:
             run_flag = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address)
     except:
-        return -np.inf
+        pass
+        
     if not (run_flag == 0):             #run is not sucessful
-        return -np.inf
+        pass
         
     try:
         if hash_address:
-            ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, var_values = var_values, hash_address = hash_address, hash_string = hash_string)
+            ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, hash_address = hash_address, hash_string = hash_string)
         else:
-            ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, var_values = var_values, hash_address = hash_address)
+            ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, hash_address = hash_address)
+        
+        return ln_prior + ln_likelihood
     except:
         return -np.inf                  #loglikelihood calculation is not sucessful
-    return ln_prior + ln_likelihood
+    
