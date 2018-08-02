@@ -91,7 +91,8 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
     if var_values is None:    
         var_values = var_values_all
     if hash_address:
-        hash_string = str(hash(np.array2string(np.array(var_values)))) # Hash the values to shrink the size
+        hash_string = str(hash(np.array2string(np.array(var_values)))) + str(hash(np.array2string(np.random.rand(len(var_values))))) 
+        # Hash the values to shrink the size, 2nd part is additional hash values to avoid same names
         
     # The MCFOST definition of inclination and position angle is not what we have been using.
 
