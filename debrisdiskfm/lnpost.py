@@ -16,8 +16,14 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
     ln_prior = lnprior.lnprior_hd191089(var_names = var_names, var_values = var_values)
     if not np.isfinite(ln_prior):
         return -np.inf
-    run_flag = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address)
+    try:
+        run_flag = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address)
+    except:
+        return -np.inf
     if not (run_flag == 0):             #run is not sucessful
         return -np.inf
-    ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, var_values = var_values, hash_address = hash_address)
+    try:
+        ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, var_values = var_values, hash_address = hash_address)
+    except:
+        return -np.inf                  #loglikelihood calculation is not sucessful
     return ln_prior + ln_likelihood

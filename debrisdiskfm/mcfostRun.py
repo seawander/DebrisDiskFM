@@ -246,23 +246,35 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
     ###############################################################################################
     flag_run = 0
     if calcSED:
-        if os.path.exists('./data_th/'):
-            shutil.rmtree('./data_th/')
+        try:
+            if os.path.exists('./data_th/'):
+                shutil.rmtree('./data_th/')
             
-        flag_sed = subprocess.call('mcfost hd191089_stis.para', shell = True)
+            flag_sed = subprocess.call('mcfost hd191089_stis.para', shell = True)
 
-        if flag_sed == 1:
-            print('SED calculation is not performed, please check conflicting folder name.')
+            if flag_sed == 1:
+                print('SED calculation is not performed, please check conflicting folder name.')
+                flag_run += flag_sed
+        except:
+            flag_sed = 1
+            print('SED calculation is not performed, something went wrong, but not the conflicting folders.')
             flag_run += flag_sed
+            pass
     if calcImage:
-        flags_image = [1, 1, 1]
-        flags_image[0] = subprocess.call('mcfost hd191089_stis.para -img 0.5852', shell = True)
-        flags_image[1] = subprocess.call('mcfost hd191089_nicmos.para -img 1.12347', shell = True)
-        flags_image[2] = subprocess.call('mcfost hd191089_gpi.para -img 1.65', shell = True)
+        try:
+            flags_image = [1, 1, 1]
+            flags_image[0] = subprocess.call('mcfost hd191089_stis.para -img 0.5852', shell = True)
+            flags_image[1] = subprocess.call('mcfost hd191089_nicmos.para -img 1.12347', shell = True)
+            flags_image[2] = subprocess.call('mcfost hd191089_gpi.para -img 1.65', shell = True)
 
-        if sum(flags_image) > 0:
-            print('Image calculation is not performed for all the three wavelengths, please check conflicting folder name(s) or non-existing SED file.')
-            flag_run += sum(flags_image)
+            if sum(flags_image) > 0:
+                print('Image calculation is not performed for all the three wavelengths, please check conflicting folder name(s) or non-existing SED file.')
+                flag_run += sum(flags_image)
+        except:
+            flags_image = 1
+            print('Image calculation is not performed for all the three wavelengths, something went wrong, but not the conflicting folders.')
+            flag_run += flags_image
+            pass
             
     os.chdir(currentDirectory)              # Go back to the top working directory
 
