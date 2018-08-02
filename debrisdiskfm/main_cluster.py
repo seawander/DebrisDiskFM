@@ -19,7 +19,7 @@ path_model='./mcfost_models/'                   # Where you'd like to store the 
 var_names = np.array(['inc', 'PA', 'm_disk', 'Rc']) # Parameters of interest, the following commented line is all the parameters
 # var_names = np.array(['inc', 'PA', 'm_disk', 'Rc', 'R_in', 'alpha_in', 'alpha_out', 'porosity', 'fmass_0', 'fmass_1', 'a_min', 'Q_powerlaw'])
 var_values_init = np.array([59.7, 70, -7, 45.3])    # Initial guesses for the above parameters, the following line is for all the parameters
-# var_values_init = np.array([59.7, 70, 1e-7, 45.3, 20, 3.5,  -3.5, 0.1, 0.05, 0.9, 1.0, 3.5])
+# var_values_init = np.array([59.7, 70, -7, 45.3, 20, 3.5,  -3.5, 0.1, 0.05, 0.9, 1.0, 3.5])
 
 #lnpost_initial = lnpost_hd191089(var_values=var_values_init, var_names=var_names, path_obs=path_obs, path_model=path_model, calcSED=True, hash_address = False)# The above line calculates the SED to make sure MCMC can run in the "image-only" mode, as in the following line
 lnpost_mcmc = lnpost_hd191089(var_values=var_values_init, var_names=var_names, path_obs=path_obs, path_model=path_model, hash_address=True)#, calcSED=False)
