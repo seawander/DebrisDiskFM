@@ -279,7 +279,8 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
             
     os.chdir(currentDirectory)              # Go back to the top working directory
 
-
+    if hash_address:
+        return flag_run, hash_string
     
     return flag_run
     # return 0 if everything is performed.

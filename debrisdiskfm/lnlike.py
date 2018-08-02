@@ -38,12 +38,14 @@ def chi2(data, data_unc, model, lnlike = True):
         return loglikelihood
     return chi2
 
-def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw = None, var_values = None, hash_address = False, delete_model = True):
+def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw = None, hash_address = False, delete_model = True, hash_string = None):
     """Return the log-likelihood for observed data and modelled data.
     Input:  path_obs: the path to the observed data
             path_model: the path to the (forwarded) models
             psfs: the point spread functions for forward modeling to simulate instrument response
             psf_cut_hw: the half-width of the PSFs if you would like to cut them to smaller sizes (size = 2*hw + 1)
+            hash_address: whether to hash the address based on the values, if True, then the address should be provided by `hash_string'
+            delete_model: whether to delete the models. True by default.
     Output: log-likelihood
             """
     ### Observations:
@@ -69,7 +71,9 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     if path_model is None:
         path_model = './test/'
     if hash_address:
-        hash_string = str(hash(np.array2string(np.array(var_values))))
+        if hash_string is None:
+            print('Please provide the hash string if you set hash_address = True!')
+            return -np.inf     
         path_model = path_model[:-1] + hash_string + '/'
         
     if psfs is None:
