@@ -99,20 +99,18 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     stis_convolved = image_registration.fft_tools.convolve_nd.convolvend(stis_model, psfs[0])
     stis_model = convertMCFOSTdataToJy(stis_convolved, wavelength = 0.5852, spatialResolution = resolution_stis) #convert to Jansky/arscec^2    
     chi2_stis = chi2(stis_obs, stis_obs_unc, stis_model, lnlike = True) #return loglikelihood value for STIS
-    # fits.writeto('/Users/binren/Desktop/test1.fits', stis_model, clobber = True)
-    
     
     nicmos_model_forwarded = fm_klip.klip_fm_main(path = path_model, angles= None, psf = psfs[1]) # already convolved
     nicmos_model = convertMCFOSTdataToJy(nicmos_model_forwarded, wavelength = 1.12347, spatialResolution = resolution_nicmos) #convert to Jansky/arscec^2
-    chi2_nicmos = chi2(nicmos_obs_unc, nicmos_obs_unc, nicmos_model, lnlike = True) #return loglikelihood value for NICMOS   
-    # fits.writeto('/Users/binren/Desktop/test2.fits', nicmos_model, clobber = True)
+    chi2_nicmos = chi2(nicmos_obs, nicmos_obs_unc, nicmos_model, lnlike = True) #return loglikelihood value for NICMOS       
     
     gpi_model = diskmodeling_Qr.diskmodeling_Qr_main(path = path_model, fwhm = 3.8)
     # FWHM = 3.8 for GPI, as provided in Tom Esposito's HD35841 paper (Section: MCMC Modeling Procedure)
     gpi_model = convertMCFOSTdataToJy(gpi_model, wavelength = 1.65, spatialResolution = resolution_gpi) #convert to Jansky/arscec^2
-    chi2_gpi = chi2(gpi_obs, gpi_obs_unc, gpi_model, lnlike = True) #return loglikelihood value for GPI
-    # fits.writeto('/Users/binren/Desktop/test3.fits', gpi_model, clobber = True)
+    mask_gpi = dependencies.annulusMask(gpi_obs.shape[0], r_in = 10, r_out = 100) # create an annulus mask with r_in to r_out being 1 (0 otherwise) to avoid extreme GPI observation values
+    chi2_gpi = chi2(gpi_obs*mask_gpi, gpi_obs_unc*mask_gpi, gpi_model*mask_gpi, lnlike = True) #return loglikelihood value for GPI
+    
     if hash_address and delete_model:    #delete the temporary MCFOST models
         shutil.rmtree(path_model) 
-    
+    print(chi2_stis, chi2_nicmos, chi2_gpi)
     return (chi2_stis+chi2_nicmos+chi2_gpi) #Returns the loglikelihood
