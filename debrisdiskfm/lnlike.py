@@ -55,8 +55,8 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     stis_obs_unc = fits.getdata(path_obs + 'STIS/calibrated/HD-191089_NoiseMap_Jy_arcsec-2_oddSize.fits')
     stis_obs_unc[np.where(stis_obs_unc <=0)] = np.nan
     
-    nicmos_obs = fits.getdata(path_obs + 'NICMOS/calibrated/HD-191089_NICMOS_F110W_Lib-84_KL-19_Signal.fits')
-    nicmos_obs_unc = fits.getdata(path_obs + 'NICMOS/calibrated/HD-191089_NICMOS_F110W_Lib-84_KL-19_NoiseMap.fits')
+    nicmos_obs = fits.getdata(path_obs + 'NICMOS/calibrated/HD-191089_NICMOS_F110W_Lib-84_KL-19_Signal-Jy_arcsec-2.fits')
+    nicmos_obs_unc = fits.getdata(path_obs + 'NICMOS/calibrated/HD-191089_NICMOS_F110W_Lib-84_KL-19_NoiseMap-Jy_arcsec-2.fits')
     nicmos_obs_unc[np.where(nicmos_obs_unc <=0)] = np.nan
     
     gpi_obs = fits.getdata(path_obs + 'GPI/calibrated/hd191089_gpi_smooth_mJy_arcsec2.fits')/1e3 #Turn it to Jy/arcsec^2
