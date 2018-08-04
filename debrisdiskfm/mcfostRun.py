@@ -116,9 +116,9 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
             # Convert our definition to the MCFOST definition of position angle
         elif var_name == 'm_disk':
             if var_name in var_names:
-                param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = 10**round(theta[var_name], 3)
+                param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = format(10**theta[var_name], '.3e')
             else:
-                param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = 10**round(theta_all[var_name], 3)
+                param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = format(10**theta_all[var_name], '.3e')
         elif var_name == 'Rc':
             if var_name in var_names:
                 param_hd191089['#Density structure']['zone0']['row3']['Rc'] = round(theta[var_name], 3)
