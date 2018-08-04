@@ -112,5 +112,5 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     
     if hash_address and delete_model:    #delete the temporary MCFOST models
         shutil.rmtree(path_model) 
-    print(chi2_stis, chi2_nicmos, chi2_gpi)
+        
     return (chi2_stis+chi2_nicmos+chi2_gpi) #Returns the loglikelihood
