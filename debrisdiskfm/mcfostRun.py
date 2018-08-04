@@ -102,54 +102,54 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
     for var_name in var_names_all:
         if var_name == 'inc':
             if var_name in var_names:
-                param_hd191089['#Maps']['row1']['imin'] = 180 - theta[var_name]
-                param_hd191089['#Maps']['row1']['imax'] = 180 - theta[var_name]
+                param_hd191089['#Maps']['row1']['imin'] = 180 - round(theta[var_name], 3)
+                param_hd191089['#Maps']['row1']['imax'] = 180 - round(theta[var_name], 3)
             else:
-                param_hd191089['#Maps']['row1']['imin'] = 180 - theta_all[var_name]
-                param_hd191089['#Maps']['row1']['imax'] = 180 - theta_all[var_name]
+                param_hd191089['#Maps']['row1']['imin'] = 180 - round(theta_all[var_name], 3)
+                param_hd191089['#Maps']['row1']['imax'] = 180 - round(theta_all[var_name], 3)
             # Convert our definition to the MCFOST definition of inclination
         elif var_name == 'PA':
             if var_name in var_names:
-                param_hd191089['#Maps']['row4']['disk PA'] = 90 - theta[var_name]
+                param_hd191089['#Maps']['row4']['disk PA'] = 90 - round(theta[var_name], 3)
             else:
-                param_hd191089['#Maps']['row4']['disk PA'] = 90 - theta_all[var_name]
+                param_hd191089['#Maps']['row4']['disk PA'] = 90 - round(theta_all[var_name], 3)
             # Convert our definition to the MCFOST definition of position angle
         elif var_name == 'm_disk':
             if var_name in var_names:
-                param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = 10**theta[var_name]
+                param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = 10**round(theta[var_name], 3)
             else:
-                param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = 10**theta_all[var_name]
+                param_hd191089['#Density structure']['zone0']['row1']['dust mass'] = 10**round(theta_all[var_name], 3)
         elif var_name == 'Rc':
             if var_name in var_names:
-                param_hd191089['#Density structure']['zone0']['row3']['Rc'] = theta[var_name]
-                param_hd191089['#Density structure']['zone0']['row3']['Rout'] = 130*resolution_stis*dist # extent of the outer halo
+                param_hd191089['#Density structure']['zone0']['row3']['Rc'] = round(theta[var_name], 3)
+                param_hd191089['#Density structure']['zone0']['row3']['Rout'] = round(130*resolution_stis*dist, 3) # extent of the outer halo
             else:
-                param_hd191089['#Density structure']['zone0']['row3']['Rc'] = theta_all[var_name]
-                param_hd191089['#Density structure']['zone0']['row3']['Rout'] = 130*resolution_stis*dist # extent of the outer halo
+                param_hd191089['#Density structure']['zone0']['row3']['Rc'] = round(theta_all[var_name], 3)
+                param_hd191089['#Density structure']['zone0']['row3']['Rout'] = round(130*resolution_stis*dist, 3) # extent of the outer halo
         elif var_name == 'R_in':
             if var_name in var_names:
-                param_hd191089['#Density structure']['zone0']['row3']['Rin'] = theta[var_name]
+                param_hd191089['#Density structure']['zone0']['row3']['Rin'] = round(theta[var_name], 3)
             else:
-                param_hd191089['#Density structure']['zone0']['row3']['Rin'] = theta_all[var_name]
+                param_hd191089['#Density structure']['zone0']['row3']['Rin'] = round(theta_all[var_name], 3)
         elif var_name == 'alpha_in':
             if var_name in var_names:
-                param_hd191089['#Density structure']['zone0']['row5']['surface density exponent/alpha_in'] = theta[var_name]
+                param_hd191089['#Density structure']['zone0']['row5']['surface density exponent/alpha_in'] = round(theta[var_name], 3)
             else:
-                param_hd191089['#Density structure']['zone0']['row5']['surface density exponent/alpha_in'] = theta_all[var_name]
+                param_hd191089['#Density structure']['zone0']['row5']['surface density exponent/alpha_in'] = round(theta_all[var_name], 3)
         elif var_name == 'alpha_out':
             if var_name in var_names:
-                param_hd191089['#Density structure']['zone0']['row5']['-gamma_exp/alpha_out'] = theta[var_name]
+                param_hd191089['#Density structure']['zone0']['row5']['-gamma_exp/alpha_out'] = round(theta[var_name], 3)
             else:
-                param_hd191089['#Density structure']['zone0']['row5']['-gamma_exp/alpha_out'] = theta_all[var_name]
+                param_hd191089['#Density structure']['zone0']['row5']['-gamma_exp/alpha_out'] = round(theta_all[var_name], 3)
         elif var_name == 'porosity':
             if var_name in var_names:
-                param_hd191089['#Grain properties']['zone0']['species0']['row0']['porosity'] = theta[var_name]
-                param_hd191089['#Grain properties']['zone0']['species1']['row0']['porosity'] = theta[var_name]
-                param_hd191089['#Grain properties']['zone0']['species2']['row0']['porosity'] = theta[var_name]
+                param_hd191089['#Grain properties']['zone0']['species0']['row0']['porosity'] = round(theta[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species1']['row0']['porosity'] = round(theta[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species2']['row0']['porosity'] = round(theta[var_name], 3)
             else:
-                param_hd191089['#Grain properties']['zone0']['species0']['row0']['porosity'] = theta_all[var_name]
-                param_hd191089['#Grain properties']['zone0']['species1']['row0']['porosity'] = theta_all[var_name]
-                param_hd191089['#Grain properties']['zone0']['species2']['row0']['porosity'] = theta_all[var_name]                    
+                param_hd191089['#Grain properties']['zone0']['species0']['row0']['porosity'] = round(theta_all[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species1']['row0']['porosity'] = round(theta_all[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species2']['row0']['porosity'] = round(theta_all[var_name], 3)                  
         elif var_name == 'fmass_0':
             if var_name in var_names:
                 param_hd191089['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta[var_name], 3)
@@ -162,22 +162,22 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
                 
         elif var_name == 'a_min':
             if var_name in var_names:
-                param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = theta[var_name]
-                param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = theta[var_name]
-                param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = theta[var_name]
+                param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = round(theta[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = round(theta[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = round(theta[var_name], 3)
             else:
-                param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = theta_all[var_name]
-                param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = theta_all[var_name]
-                param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = theta_all[var_name]
+                param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = round(theta_all[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = round(theta_all[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = round(theta_all[var_name], 3)
         elif var_name == 'Q_powerlaw':
             if var_name in var_names:
-                param_hd191089['#Grain properties']['zone0']['species0']['row3']['aexp'] = theta[var_name]
-                param_hd191089['#Grain properties']['zone0']['species1']['row3']['aexp'] = theta[var_name]
-                param_hd191089['#Grain properties']['zone0']['species2']['row3']['aexp'] = theta[var_name]
+                param_hd191089['#Grain properties']['zone0']['species0']['row3']['aexp'] = round(theta[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species1']['row3']['aexp'] = round(theta[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species2']['row3']['aexp'] = round(theta[var_name], 3)
             else:
-                param_hd191089['#Grain properties']['zone0']['species0']['row3']['aexp'] = theta_all[var_name]
-                param_hd191089['#Grain properties']['zone0']['species1']['row3']['aexp'] = theta_all[var_name]
-                param_hd191089['#Grain properties']['zone0']['species2']['row3']['aexp'] = theta_all[var_name]
+                param_hd191089['#Grain properties']['zone0']['species0']['row3']['aexp'] = round(theta_all[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species1']['row3']['aexp'] = round(theta_all[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species2']['row3']['aexp'] = round(theta_all[var_name], 3)
 
 
     ###############################################################################################
