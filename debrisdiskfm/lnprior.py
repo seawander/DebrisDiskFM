@@ -30,7 +30,7 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (-20 < (theta['Rc'] - 45.3) < 20):
                 return -np.inf
         elif var_name == 'R_in':
-            if not (0 < theta['R_in'] < 65.3):
+            if not (0 < theta['R_in'] < 45.3):
                 return -np.inf
         elif var_name == 'alpha_in':
             if not (0 < theta['alpha_in'] < 5):
