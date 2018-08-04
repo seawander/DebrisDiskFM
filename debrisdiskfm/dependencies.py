@@ -2,11 +2,45 @@ import numpy as np
 from scipy.ndimage.interpolation import rotate
 from scipy.interpolate import interp2d
 
+def annulusMask(width, r_in, r_out = None, width_x = None, cen_y = None, cen_x = None):
+    """Creat a width*width all-0 mask; for r_in <= r <= r_out, 1.
+    If r_out = 0, it means you are not constraining r_out, i.e., if r >= r_int, all ones.
+    Default is a square mask centering at the center.
+    Input:
+        width: number of rows, a.k.a., width_y;
+        width_x: number of columns. Default is None, i.e., width_x = width;
+        r_in: where 1 starts;
+        r_out: where 1 ends. Default is None, i.e., r_out = +infinity;
+        cen_y: center of the annulus in y-direction. Default is None, i.e., cen_y = (width-1)/2.0;
+        cen_x: center of the annulus in x-direction. Default is None, i.e., cen_x = (width_x-1)/2.0;
+    Output:
+        result.
+    """
+    if width_x is None:
+        width_x = width
+    if cen_y is None:
+        cen_y = (width-1)/2.0
+    if cen_x is None:
+        cen_x = (width_x-1)/2.0
+    
+    result = np.zeros((width, width_x))
+    
+    r_in = np.max([0, r_in])
+    
+    for i in range(width):
+        for j in range(width_x):
+            if r_out is None:
+                if (i - cen_y)**2 + (j - cen_x)**2 >= r_in**2:
+                    result[i, j] = 1
+            else:
+                if (i - cen_y)**2 + (j - cen_x)**2 >= r_in**2 and (i - cen_y)**2 + (j - cen_x)**2 <= r_out**2:
+                    result[i, j] = 1
+    return result
 
 
 def addplanet(image, planet, orientat = None, starflux = 1, radius = None, angle = None, contrast=1, exptime=1, planetOnly = False, x_planet = None, y_planet = None, surroundingReplace = None):
     """
-    Add a fake planet to ONE image of the star, "angle" is from north to east.
+    Add a fake planet or image to ONE image of the star, "angle" is from north to east.
     Input:
         image: image of star, 
         orientat: ORIENTAT keyword, 
