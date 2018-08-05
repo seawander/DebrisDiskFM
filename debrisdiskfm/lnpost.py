@@ -36,5 +36,6 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
         
         return ln_prior + ln_likelihood
     except:
+        shutil.rmtree(path_model)
         return -np.inf                  #loglikelihood calculation is not sucessful
     
