@@ -2,6 +2,7 @@ from . import lnprior
 from . import lnlike
 from . import mcfostRun
 import numpy as np
+import shutil
 
 def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False, hash_address = True):
     """Returns the log-posterior probability (post = prior * likelihood, thus lnpost = lnprior + lnlike)
