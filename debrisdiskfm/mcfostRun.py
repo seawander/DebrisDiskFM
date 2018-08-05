@@ -251,7 +251,7 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
             if os.path.exists('./data_th/'):
                 shutil.rmtree('./data_th/')
             
-            flag_sed = subprocess.call('mcfost hd191089_stis.para', shell = True)
+            flag_sed = subprocess.call('mcfost hd191089_stis.para >> sedmcfostout.txt', shell = True)
 
             if flag_sed == 1:
                 print('SED calculation is not performed, please check conflicting folder name.')
@@ -264,9 +264,9 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
     if calcImage:
         try:
             flags_image = [1, 1, 1]
-            flags_image[0] = subprocess.call('mcfost hd191089_stis.para -img 0.5852', shell = True)
-            flags_image[1] = subprocess.call('mcfost hd191089_nicmos.para -img 1.12347', shell = True)
-            flags_image[2] = subprocess.call('mcfost hd191089_gpi.para -img 1.65', shell = True)
+            flags_image[0] = subprocess.call('mcfost hd191089_stis.para -img 0.5852 >> imagemcfostout.txt', shell = True)
+            flags_image[1] = subprocess.call('mcfost hd191089_nicmos.para -img 1.12347 >> imagemcfostout.txt', shell = True)
+            flags_image[2] = subprocess.call('mcfost hd191089_gpi.para -img 1.65 >> imagemcfostout.txt', shell = True)
 
             if sum(flags_image) > 0:
                 print('Image calculation is not performed for all the three wavelengths, please check conflicting folder name(s) or non-existing SED file.')
