@@ -25,7 +25,8 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
         pass
         
     if not (run_flag == 0):             #run is not sucessful
-        pass
+        shutil.rmtree(path_model)
+        return -np.inf
         
     try:
         if hash_address:
