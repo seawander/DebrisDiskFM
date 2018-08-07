@@ -12,6 +12,7 @@ def lnprior_hd191089(var_names = None, var_values = None):
                          45.3, 20, 3.5,  -3.5, 0.1,
                         0.05, 0.9,
                         1.0, 3.5]
+    var_values = list(np.round(var_values, 3)) #round to 3 decimal digits
                         
     # The MCFOST definition of inclination and position angle is not what we have been using.
 
@@ -33,7 +34,7 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (0 < theta['R_in'] < 45.3):
                 return -np.inf
         elif var_name == 'alpha_in':
-            if not (0 < theta['alpha_in'] < 5):
+            if not (0 < theta['alpha_in'] < 10):
                 return -np.inf
         elif var_name == 'alpha_out':
             if not (-15 < theta['alpha_out'] < 0):
@@ -45,10 +46,10 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (0 < theta['fmass_0'] < 1) or (not (0 < theta['fmass_1'] < 1)) or (not (0 < (theta['fmass_0'] + theta['fmass_1']) <= 1)):
                 return -np.inf
         elif var_name == 'a_min':
-            if not (0 < theta['a_min'] < 5):
+            if not (0 < theta['a_min'] < 50):
                 return -np.inf
         elif var_name == 'Q_powerlaw':
-            if not (0 < theta['Q_powerlaw'] < 5):
+            if not (0 < theta['Q_powerlaw'] < 10):
                 return -np.inf
     return 0
     # if ((-10 < (theta['inc'] - 59.7) < 10) and \
