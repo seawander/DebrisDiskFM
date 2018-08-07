@@ -17,6 +17,8 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
     ln_prior = lnprior.lnprior_hd191089(var_names = var_names, var_values = var_values)
     if not np.isfinite(ln_prior):
         return -np.inf
+        
+    run_flag = 1
     try:
         if hash_address:
             run_flag, hash_string = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address)
@@ -25,11 +27,17 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
     except:
         pass
         
-    if not (run_flag == 0):             #run is not sucessful
-        shutil.rmtree(path_model)
+    if not (run_flag == 0):             # if run is not successful, remove the folders
+        try:
+            if hash_address:
+                shutil.rmtree(path_model[:-1] + hash_string + '/')
+            else:
+                shutil.rmtree(path_model)
+        except:
+            print('This folder is not successfully removed.')
         return -np.inf
         
-    try:
+    try:                                # if run is successful, calculate the posterior
         if hash_address:
             ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, hash_address = hash_address, hash_string = hash_string)
         else:
@@ -37,7 +45,7 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
         
         return ln_prior + ln_likelihood
     except:
-        if hash_address:
+        if hash_address:               
             shutil.rmtree(path_model[:-1] + hash_string + '/')
         return -np.inf                  #loglikelihood calculation is not sucessful
     
