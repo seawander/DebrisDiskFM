@@ -5,6 +5,8 @@ import sys
 import debrisdiskfm                             # to import debrisdiskfm, make sure you setup the code in the DebrisDiskFM package using "python3 setup.py develop"
 from debrisdiskfm import lnpost_hd191089
 import numpy as np
+import time
+from multiprocessing import Pool
 
 path_obs='./data_observation/'                  # Where the observed data are, check/modify the lnlike.lnlike_hd191089() function, 
                                                 # especially the "#Observations" section for your own adjustion.
@@ -29,13 +31,21 @@ step = 10                       # how many steps are expected for MCMC to run
 ############################                MCMC               #########################################
 ########################################################################################################
 import emcee
-sampler = emcee.EnsembleSampler(nwalkers = n_walkers, dim = n_dim, lnpostfn=lnpost_hd191089, args=[var_names, path_obs, path_model])
+filename = "state.h5"
+backend = emcee.backends.HDFBackend(filename)   # the backend file is used to store the status
 
-values_ball = [var_values_init + 1e-1*np.random.randn(n_dim) for i in range(n_walkers)] # Initialize the walkers using different values 
-                                                                                        # around the initial guess (var_values_init)
-                                                                                        
-sampler.run_mcmc(values_ball, step)
+with Pool() as pool:
+    start = time.time()
+    sampler = emcee.EnsembleSampler(nwalkers = n_walkers, dim = n_dim, lnpostfn=lnpost_hd191089, args=[var_names, path_obs, path_model], pool = pool, backend=backend)
 
+    values_ball = [var_values_init + 1e-1*np.random.randn(n_dim) for i in range(n_walkers)] # Initialize the walkers using different values 
+                                                                                            # around the initial guess (var_values_init)                                                           
+    sampler.run_mcmc(values_ball, step)
+    
+    end = time.time()
+    serial_time = end - start
+    
+    print("1 nodes * xxx cores with multiprocess took {0:.1f} seconds".format(serial_time))
 
 import corner
 trunc = 0                                        # A step number you'd like to truncate at (aim: get rid of the burrning stage)
