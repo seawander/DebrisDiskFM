@@ -38,7 +38,7 @@ def chi2(data, data_unc, model, lnlike = True):
         return loglikelihood
     return chi2
 
-def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw = None, hash_address = False, delete_model = True, hash_string = None):
+def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw = None, hash_address = False, delete_model = True, hash_string = None, return_model_only = False):
     """Return the log-likelihood for observed data and modelled data.
     Input:  path_obs: the path to the observed data
             path_model: the path to the (forwarded) models
@@ -46,6 +46,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
             psf_cut_hw: the half-width of the PSFs if you would like to cut them to smaller sizes (size = 2*hw + 1)
             hash_address: whether to hash the address based on the values, if True, then the address should be provided by `hash_string'
             delete_model: whether to delete the models. True by default.
+            return_model_only: only return the forwarded models for debug/grid-modeling purpose
     Output: log-likelihood
             """
     ### Observations:
@@ -111,6 +112,8 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     chi2_gpi = chi2(gpi_obs*mask_gpi, gpi_obs_unc*mask_gpi, gpi_model*mask_gpi, lnlike = True) #return loglikelihood value for GPI
     
     if hash_address and delete_model:    #delete the temporary MCFOST models
-        shutil.rmtree(path_model) 
-        
+        shutil.rmtree(path_model)
+    if return_model_only:
+        return stis_model, nicmos_model, gpi_model*mask_gpi
+    
     return (chi2_stis+chi2_nicmos+chi2_gpi) #Returns the loglikelihood

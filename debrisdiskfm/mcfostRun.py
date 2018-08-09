@@ -47,7 +47,7 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
     ###############################################################################################
 
     dist = 50.14
-    param_hd191089['#Grid geometry and size']['row1']['n_rad'] = 35
+    param_hd191089['#Grid geometry and size']['row1']['n_rad'] = 100
     param_hd191089['#Maps']['row3']['distance'] = dist
 
 
