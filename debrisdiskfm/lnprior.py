@@ -19,19 +19,19 @@ def lnprior_hd191089(var_names = None, var_values = None):
     theta = dict(zip(var_names, var_values))
     for var_name in var_names:
         if var_name == 'inc':
-            if not (-20 < (theta['inc'] - 59.7) < 20):
+            if not (-10 < (theta['inc'] - 59.7) < 10):
                 return -np.inf
         elif var_name == 'PA':
-            if not (-20 < (theta['PA'] - 70) < 20):
+            if not (-10 < (theta['PA'] - 70) < 10):
                 return -np.inf
         elif var_name == 'm_disk':
-            if not (-10 < theta['m_disk'] < -4):
+            if not (-8 < theta['m_disk'] < -6):
                 return -np.inf
         elif var_name == 'Rc':
-            if not (-30 < (theta['Rc'] - 45.3) < 30):
+            if not (-10 < (theta['Rc'] - 45.3) < 10):
                 return -np.inf
         elif var_name == 'R_in':
-            if not (0 < theta['R_in'] < 100):
+            if not (0 < theta['R_in'] < 55) or not (theta['R_in'] < theta['Rc']):
                 return -np.inf
         elif var_name == 'alpha_in':
             if not (0 < theta['alpha_in'] < 10):

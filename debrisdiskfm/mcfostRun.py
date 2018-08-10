@@ -81,11 +81,11 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
     var_names_all = ['inc', 'PA', 'm_disk', 
                      'Rc', 'R_in', 'alpha_in', 'alpha_out', 'porosity', 
                      'fmass_0', 'fmass_1', 
-                     'a_min', 'Q_powerlaw']
+                     'a_min', 'Q_powerlaw', 'scale height']
     var_values_all = [59.7, 70, -7, 
                      45.3, 20, 3.5,  -5, 0.95,
                     0.3, 0.3,
-                    1.0, 3.5]
+                    1.0, 3.5, 1.812]
     if var_names is None:
         var_names = var_names_all    #The above treatment allows for small paramter searching
     if var_values is None:    
@@ -178,7 +178,11 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
                 param_hd191089['#Grain properties']['zone0']['species0']['row3']['aexp'] = round(theta_all[var_name], 3)
                 param_hd191089['#Grain properties']['zone0']['species1']['row3']['aexp'] = round(theta_all[var_name], 3)
                 param_hd191089['#Grain properties']['zone0']['species2']['row3']['aexp'] = round(theta_all[var_name], 3)
-
+        elif var_name == 'scale height':
+            if var_name in var_names:
+                param_hd191089['#Density structure']['zone0']['row2']['scale height'] = round(theta[var_name], 3)
+            else:
+                param_hd191089['#Density structure']['zone0']['row2']['scale height'] = round(theta_all[var_name], 3)
 
     ###############################################################################################
     ########################### Section 3: Parameter File for HD191089 ############################
