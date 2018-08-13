@@ -4,7 +4,7 @@ from . import mcfostRun
 import numpy as np
 import shutil
 
-def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False, hash_address = True):
+def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False, hash_address = True, STIS = False, NICMOS = False, GPI = True):
     """Returns the log-posterior probability (post = prior * likelihood, thus lnpost = lnprior + lnlike)
     for a given parameter combination.
     Input:  var_values: number array, values for var_names. Refer to mcfostRun() for details. 
@@ -21,9 +21,9 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
     run_flag = 1
     try:
         if hash_address:
-            run_flag, hash_string = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address)
+            run_flag, hash_string = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address, STIS = STIS, NICMOS = NICMOS, GPI = GPI)
         else:
-            run_flag = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address)
+            run_flag = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address, STIS = STIS, NICMOS = NICMOS, GPI = GPI)
     except:
         pass
         
@@ -39,9 +39,9 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
         
     try:                                # if run is successful, calculate the posterior
         if hash_address:
-            ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, hash_address = hash_address, hash_string = hash_string)
+            ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, hash_address = hash_address, hash_string = hash_string, STIS = STIS, NICMOS = NICMOS, GPI = GPI)
         else:
-            ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, hash_address = hash_address)
+            ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, hash_address = hash_address, STIS = STIS, NICMOS = NICMOS, GPI = GPI)
         
         return ln_prior + ln_likelihood
     except:
