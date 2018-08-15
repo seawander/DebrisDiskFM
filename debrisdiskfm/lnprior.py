@@ -43,7 +43,7 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (0 < theta['porosity'] < 1):
                 return -np.inf
         elif var_name == 'fmass_0':
-            if not (0 < theta['fmass_0'] < 1) or (not (0 < theta['fmass_1'] < 1)) or (not (0 < (theta['fmass_0'] + theta['fmass_1']) <= 1)):
+            if not (0 < theta['fmass_0'] < 1) or (not (0 < theta['fmass_1'] < 1)) or (not (0 < (theta['fmass_0'] + theta['fmass_1']) < 1)):
                 return -np.inf
         elif var_name == 'a_min':
             if not (0 < theta['a_min'] < 50):
