@@ -266,8 +266,14 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
         try:
             if os.path.exists('./data_th/'):
                 shutil.rmtree('./data_th/')
-            
-            flag_sed = subprocess.call('mcfost hd191089_stis.para >> sedmcfostout.txt', shell = True)
+            if STIS:
+                instrument = 'stis'
+            elif NICMOS:
+                instrument = 'nicmos'
+            elif GPI:
+                instrument = 'gpi'
+                
+            flag_sed = subprocess.call('mcfost hd191089_' + instrument + '.para >> sedmcfostout.txt', shell = True)
 
             if flag_sed == 1:
                 print('SED calculation is not performed, please check conflicting folder name.')

@@ -25,7 +25,7 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (-10 < (theta['PA'] - 70) < 10):
                 return -np.inf
         elif var_name == 'm_disk':
-            if not (-8 < theta['m_disk'] < -6):
+            if not (-12 < theta['m_disk'] < -4):
                 return -np.inf
         elif var_name == 'Rc':
             if not (-10 < (theta['Rc'] - 45.3) < 10):
