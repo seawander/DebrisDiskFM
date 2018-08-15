@@ -110,16 +110,15 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     if NICMOS:
         nicmos_model_forwarded = fm_klip.klip_fm_main(path = path_model, angles= None, psf = psfs[1]) # already convolved
         nicmos_model = convertMCFOSTdataToJy(nicmos_model_forwarded, wavelength = 1.12347, spatialResolution = resolution_nicmos) #convert to Jansky/arscec^2
-        if np.nansum(np.isnan(nicmos_model)) != 0:
-            chi2_nicmos = -np.inf
-        else:
-            chi2_nicmos = chi2(nicmos_obs, nicmos_obs_unc, nicmos_model, lnlike = True) #return loglikelihood value for NICMOS       
+        chi2_nicmos = chi2(nicmos_obs, nicmos_obs_unc, nicmos_model, lnlike = True) #return loglikelihood value for NICMOS       
     else:
         chi2_nicmos = 0
     if GPI:
         gpi_model = diskmodeling_Qr.diskmodeling_Qr_main(path = path_model, fwhm = 3.8)
         mask_gpi = dependencies.annulusMask(gpi_obs.shape[0], r_in = 10, r_out = 100) # create an annulus mask with r_in to r_out being 1 (0 otherwise) to avoid extreme GPI observation values
         mask_gpi[:120, :120] = 0 #hard coded to avoid fitting specific region(s)
+        
+        # return gpi_model*mask_gpi
         
         if np.nansum(np.isnan(gpi_model)) != 0:
             chi2_gpi = -np.inf

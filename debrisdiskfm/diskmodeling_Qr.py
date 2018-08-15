@@ -23,10 +23,8 @@ def radialStokes(modeldata = None, mcfostGenerated = True, q = None, u = None):
     phi = np.arctan((y-y_cen)*1.0/(x-x_cen))
     qr = q * np.cos(2 * phi) + u * np.sin(2 * phi)
     ur = -q * np.sin(2 * phi) + u * np.cos(2 * phi)
-    # fits.writeto('/Users/binren/Desktop/test.fits',  modeldata[0, 0, 0], clobber = True)
-    # fits.writeto('/Users/binren/Desktop/test1.fits',  qr, clobber = True)
-    # fits.writeto('/Users/binren/Desktop/test2.fits',  ur, clobber = True)
-    #
+    qr[np.where(np.isnan(qr))] = 0
+    ur[np.where(np.isnan(ur))] = 0
     return qr, ur
 
 def diskmodeling_Qr_main(path = './test/', fwhm = None):
