@@ -19,10 +19,10 @@ def lnprior_hd191089(var_names = None, var_values = None):
     theta = dict(zip(var_names, var_values))
     for var_name in var_names:
         if var_name == 'inc':
-            if not (-10 < (theta['inc'] - 59.7) < 10):
+            if not (-5 < (theta['inc'] - 59.7) < 5):
                 return -np.inf
         elif var_name == 'PA':
-            if not (-10 < (theta['PA'] - 70) < 10):
+            if not (-5 < (theta['PA'] - 70) < 5):
                 return -np.inf
         elif var_name == 'm_disk':
             if not (-12 < theta['m_disk'] < -4):
@@ -31,10 +31,10 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (-10 < (theta['Rc'] - 45.3) < 10):
                 return -np.inf
         elif var_name == 'R_in':
-            if not (0 < theta['R_in'] < 55) or not (theta['R_in'] < theta['Rc']):
+            if not (0 < theta['R_in'] < 45) or not (theta['R_in'] < theta['Rc']):
                 return -np.inf
         elif var_name == 'alpha_in':
-            if not (0 < theta['alpha_in'] < 10):
+            if not (0 < theta['alpha_in'] < 5):
                 return -np.inf
         elif var_name == 'alpha_out':
             if not (-15 < theta['alpha_out'] < 0):
@@ -46,7 +46,7 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (0 < theta['fmass_0'] < 1) or (not (0 < theta['fmass_1'] < 1)) or (not (0 < (theta['fmass_0'] + theta['fmass_1']) < 1)):
                 return -np.inf
         elif var_name == 'a_min':
-            if not (0 < theta['a_min'] < 2):
+            if not (0.1 < theta['a_min'] < 2):
                 return -np.inf
         elif var_name == 'Q_powerlaw':
             if not (0 < theta['Q_powerlaw'] < 10):
