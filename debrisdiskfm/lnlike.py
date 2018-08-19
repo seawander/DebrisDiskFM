@@ -115,8 +115,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         chi2_nicmos = 0
     if GPI:
         gpi_model = diskmodeling_Qr.diskmodeling_Qr_main(path = path_model, fwhm = 3.8)
-        mask_gpi = dependencies.annulusMask(gpi_obs.shape[0], r_in = 10, r_out = 100) # create an annulus mask with r_in to r_out being 1 (0 otherwise) to avoid extreme GPI observation values
-        mask_gpi[:120, :120] = 0 #hard coded to avoid fitting specific region(s)
+        mask_gpi = fits.getdata(path_obs + 'GPI/calibrated/mask_gpi.fits') # create an annulus mask with r_in to r_out being 1 (0 otherwise) to avoid extreme GPI observation values
         
         # return gpi_model*mask_gpi
         
@@ -134,6 +133,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         shutil.rmtree(path_model)
     
     lnlike_total = chi2_stis+chi2_nicmos+chi2_gpi
+    
     if np.isfinite(lnlike_total):
         if return_model_only:
             if STIS and NICMOS and GPI:
