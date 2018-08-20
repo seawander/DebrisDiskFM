@@ -79,8 +79,13 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         path_model = path_model[:-1] + hash_string + '/'
         
     if psfs is None:
-        psf_stis = fits.getdata(path_obs + 'STIS/calibrated/STIS_6440K_tinyTIM_oddSize.fits')
-        psf_nicmos = fits.getdata(path_obs + 'NICMOS/calibrated/NICMOS_Era2_F110W_oddSize.fits')
+        psf_stis_raw = fits.getdata(path_obs + 'STIS/calibrated/STIS_6440K_tinyTIM_oddSize.fits')
+        psf_stis = np.zeros(psf_stis_raw.shape)
+        psf_stis[148:167, 148:167] = psf_stis_raw[148:167, 148:167] #focus only on the 19x19 PSF region as done in calculating the STIS BAR5 contrast.
+        psf_nicmos_raw = fits.getdata(path_obs + 'NICMOS/calibrated/NICMOS_Era2_F110W_oddSize.fits')
+        psf_nicmos = np.zeros(psf_nicmos_raw.shape)
+        psf_nicmos[60:79, 60:79] = psf_nicmos_raw[60:79, 60:79] #focus only on the 19x19 PSF region as for the STIS data.
+        
         psfs = [psf_stis, psf_nicmos]
         
         if psf_cut_hw is not None:
