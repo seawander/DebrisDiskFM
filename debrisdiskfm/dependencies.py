@@ -159,7 +159,7 @@ def bin_data(data, bin_size = 3, data_type = 'data', bin_method = 'average'):
     
     The bin_method can be assigned with 'average' or 'sum':
         if 'sum', the raw binned data will be returned;
-        if 'average', the raw binned data will be divided by bin_size^2 then returned.
+        if 'average', the raw binned data will be divided by bin_size^2 then returned. If your data is already in unit of /arcsec^2, please use this option.
     """
     if data_type == 'uncertainty':
         data = data**2
@@ -173,15 +173,14 @@ def bin_data(data, bin_size = 3, data_type = 'data', bin_method = 'average'):
     data_binned = np.dot(bin_matrix.T, np.dot(data_extended, bin_matrix))
     
     if bin_method == 'sum':
-        pass
+        if data_type == 'uncertainty':
+            return np.sqrt(data_binned)
     elif bin_method == 'average':
         if data_type == 'data':
             data_binned /= bin_size**2
         elif data_type == 'uncertainty':
-            data_binned /= bin_size**4 #the extra power of 2 is because the raw data is squared for the uncertainty map
-        
-    if data_type == 'uncertainty':
-        return np.sqrt(data_binned)
+            data_binned = np.sqrt(data_binned)
+            data_binned/= bin_size**2 #the extra power of 2 is because the raw data is squared for the uncertainty map
     return data_binned
     
 def rotateImage(cube, mask = None, angle = None, reshape = False, new_width = None, new_height = None, thresh = 0.9, maskedNaN = False, outputMask = True, instrument = None):
