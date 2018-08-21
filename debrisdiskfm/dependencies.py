@@ -153,6 +153,37 @@ def cutImage(image, halfSize, x_cen = None, y_cen = None, halfSizeX = None, half
     
     return newImage*maskInterped
     
+def bin_data(data, bin_size = 3, data_type = 'data', bin_method = 'average'):
+    """Bin the data with a bin_size*bin_size box. If the data_type is `data`, then a simple addition is performed,
+    if it is an `uncertainty` map, then the square root of the squared sums are returned.
+    
+    The bin_method can be assigned with 'average' or 'sum':
+        if 'sum', the raw binned data will be returned;
+        if 'average', the raw binned data will be divided by bin_size^2 then returned.
+    """
+    if data_type == 'uncertainty':
+        data = data**2
+    total_size = np.ceil(data.shape[0] / bin_size) * bin_size
+    half_size = (total_size - 1)/2.0
+    data_extended = cutImage(data, halfSize=half_size)
+    data_extended[np.isnan(data_extended)] = 0
+    bin_matrix = np.zeros((int(total_size), int(total_size//bin_size)))
+    for i in range(int(total_size//bin_size)):
+        bin_matrix[bin_size*i:bin_size*(i+1), i] = 1
+    data_binned = np.dot(bin_matrix.T, np.dot(data_extended, bin_matrix))
+    
+    if bin_method == 'sum':
+        pass
+    elif bin_method == 'average':
+        if data_type == 'data':
+            data_binned /= bin_size**2
+        elif data_type == 'uncertainty':
+            data_binned /= bin_size**4 #the extra power of 2 is because the raw data is squared for the uncertainty map
+        
+    if data_type == 'uncertainty':
+        return np.sqrt(data_binned)
+    return data_binned
+    
 def rotateImage(cube, mask = None, angle = None, reshape = False, new_width = None, new_height = None, thresh = 0.9, maskedNaN = False, outputMask = True, instrument = None):
     """Rotate an image with 1 mask and 1 angle."""
     cube0 = np.copy(cube)
