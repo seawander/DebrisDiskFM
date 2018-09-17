@@ -120,7 +120,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         chi2_nicmos = 0
     if GPI:
         gpi_model = diskmodeling_Qr.diskmodeling_Qr_main(path = path_model, fwhm = 3.8)
-        mask_gpi = fits.getdata(path_obs + 'GPI/calibrated/mask_gpi.fits') # create an annulus mask with r_in to r_out being 1 (0 otherwise) to avoid extreme GPI observation values
+        mask_gpi = 1#fits.getdata(path_obs + 'GPI/calibrated/mask_gpi.fits') # create an annulus mask with r_in to r_out being 1 (0 otherwise) to avoid extreme GPI observation values
         
         # return gpi_model*mask_gpi
         
