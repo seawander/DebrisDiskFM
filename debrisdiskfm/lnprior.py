@@ -46,7 +46,7 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (0 < theta['fmass_0'] < 1) or (not (0 < theta['fmass_1'] < 1)) or (not (0 < (theta['fmass_0'] + theta['fmass_1']) < 1)):
                 return -np.inf
         elif var_name == 'a_min':
-            if not (0.1 < theta['a_min'] < 2):
+            if not (0.001 < theta['a_min'] < 20):
                 return -np.inf
         elif var_name == 'Q_powerlaw':
             if not (0 < theta['Q_powerlaw'] < 10):

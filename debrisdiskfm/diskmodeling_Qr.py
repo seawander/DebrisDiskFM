@@ -7,7 +7,7 @@ def radialStokes(modeldata = None, mcfostGenerated = True, q = None, u = None):
     if mcfostGenerated:
         #if modeldata has the structure of MCFOST image output
         q = modeldata[1, 0, 0]
-        u = -modeldata[2, 0, 0] # convert the MCFOST definition of U to IAU definition by flipping the sign
+        u = modeldata[2, 0, 0] # convert the MCFOST definition of U to IAU definition by flipping the sign
     
     x_cen = (q.shape[1] - 1)/2.0
     y_cen = (q.shape[0] - 1)/2.0
