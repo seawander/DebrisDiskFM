@@ -77,29 +77,30 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
             print('Please provide the hash string if you set hash_address = True!')
             return -np.inf     
         path_model = path_model[:-1] + hash_string + '/'
+    try:    
+        if psfs is None:
+            psfs = [None, None]
+            psf_stis_raw = fits.getdata(path_obs + 'STIS/calibrated/STIS_6440K_tinyTIM_oddSize.fits')
+            psf_stis = np.zeros(psf_stis_raw.shape)
+            psf_stis[148:167, 148:167] = psf_stis_raw[148:167, 148:167] #focus only on the 19x19 PSF region as done in calculating the STIS BAR5 contrast.
+            psf_nicmos_raw = fits.getdata(path_obs + 'NICMOS/calibrated/NICMOS_Era2_F110W_oddSize.fits')
+            psf_nicmos = np.zeros(psf_nicmos_raw.shape)
+            psf_nicmos[60:79, 60:79] = psf_nicmos_raw[60:79, 60:79] #focus only on the 19x19 PSF region as for the STIS data.
         
-    if psfs is None:
-        psf_stis_raw = fits.getdata(path_obs + 'STIS/calibrated/STIS_6440K_tinyTIM_oddSize.fits')
-        psf_stis = np.zeros(psf_stis_raw.shape)
-        psf_stis[148:167, 148:167] = psf_stis_raw[148:167, 148:167] #focus only on the 19x19 PSF region as done in calculating the STIS BAR5 contrast.
-        psf_nicmos_raw = fits.getdata(path_obs + 'NICMOS/calibrated/NICMOS_Era2_F110W_oddSize.fits')
-        psf_nicmos = np.zeros(psf_nicmos_raw.shape)
-        psf_nicmos[60:79, 60:79] = psf_nicmos_raw[60:79, 60:79] #focus only on the 19x19 PSF region as for the STIS data.
+            psfs = [psf_stis, psf_nicmos]
         
-        psfs = [psf_stis, psf_nicmos]
-        
-        if psf_cut_hw is not None:
-            psfs[0] = dependencies.cutImage(psf_stis, psf_cut_hw)   # a 7*7 PSF would need psf_cut_hw = 3 (then 3*2+1 = 7).
-            psfs[1] = dependencies.cutImage(psf_nicmos, psf_cut_hw) # a 7*7 PSF would need psf_cut_hw = 3
-            psfs[0] /= np.nansum(psfs[0])
-            psfs[1] /= np.nansum(psfs[1])
-        else:
-            psfs[0] = psf_stis
-            psfs[1] = psf_nicmos
-            psfs[0] /= np.nansum(psfs[0])
-            psfs[1] /= np.nansum(psfs[1])
-        
-        
+            if psf_cut_hw is not None:
+                psfs[0] = dependencies.cutImage(psf_stis, psf_cut_hw)   # a 7*7 PSF would need psf_cut_hw = 3 (then 3*2+1 = 7).
+                psfs[1] = dependencies.cutImage(psf_nicmos, psf_cut_hw) # a 7*7 PSF would need psf_cut_hw = 3
+                psfs[0] /= np.nansum(psfs[0])
+                psfs[1] /= np.nansum(psfs[1])
+            else:
+                psfs[0] = psf_stis
+                psfs[1] = psf_nicmos
+                psfs[0] /= np.nansum(psfs[0])
+                psfs[1] /= np.nansum(psfs[1])
+    except:
+        pass        
     # convert the MCFOST units to Jy/arcsec^2, and calculate individual chi2
     if STIS:
         stis_model = fits.getdata(path_model + 'data_0.5852/RT.fits.gz')[0, 0, 0]
