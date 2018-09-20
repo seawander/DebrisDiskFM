@@ -114,9 +114,9 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
             # Convert our definition to the MCFOST definition of inclination
         elif var_name == 'PA':
             if var_name in var_names:
-                param_hd191089['#Maps']['row4']['disk PA'] = 90 - round(theta[var_name], 3)
+                param_hd191089['#Maps']['row4']['disk PA'] = round(theta[var_name], 3) - 90
             else:
-                param_hd191089['#Maps']['row4']['disk PA'] = 90 - round(theta_all[var_name], 3)
+                param_hd191089['#Maps']['row4']['disk PA'] = round(theta_all[var_name], 3) - 90
             # Convert our definition to the MCFOST definition of position angle
         elif var_name == 'm_disk':
             if var_name in var_names:
