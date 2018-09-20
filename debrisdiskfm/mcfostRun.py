@@ -254,14 +254,6 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
             shutil.rmtree(paraPath_hash)
             
         os.mkdir(paraPath_hash)
-        
-        if calcImage and (not (calcSED)):
-            subprocess.call('ln -s ' + currentDirectory +'/mcfost_models/_dust_prop_th.tmp ' + paraPath_hash + '_dust_prop_th.tmp', shell = True)
-            subprocess.call('ln -s ' + currentDirectory +'/mcfost_models/data_th/ ' + paraPath_hash + 'data_th', shell = True)
-            # subprocess.call('cp -r ' + paraPath + 'data_th ' + paraPath_hash + '.', shell = True)
-            # subprocess.call('cp ' + paraPath + '_dust_prop_th.tmp ' + paraPath_hash + '.', shell = True)
-            
-        os.chdir(paraPath_hash) 
     else:
         os.chdir(paraPath)                      # Now everthing is stored in the `paraPath` folder.
         
@@ -311,11 +303,11 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
         try:
             flags_image = [flag_STIS, flag_NICMOS, flag_GPI]
             if STIS:
-                flags_image[0] = subprocess.call('mcfost hd191089_stis.para -img 0.5852 >> imagemcfostout.txt', shell = True)
+                flags_image[0] = subprocess.call('mcfost hd191089_stis.para -img 0.58 -only_scatt >> imagemcfostout_STIS.txt', shell = True)
             if NICMOS:
-                flags_image[1] = subprocess.call('mcfost hd191089_nicmos.para -img 1.12347 >> imagemcfostout.txt', shell = True)
+                flags_image[1] = subprocess.call('mcfost hd191089_nicmos.para -img 1.12 -only_scatt >> imagemcfostout_NICMOS.txt', shell = True)
             if GPI:
-                flags_image[2] = subprocess.call('mcfost hd191089_gpi.para -img 1.65 >> imagemcfostout.txt', shell = True)
+                flags_image[2] = subprocess.call('mcfost hd191089_gpi.para -img 1.65 -only_scatt >> imagemcfostout_GPI_H.txt', shell = True)
 
             if sum(flags_image) > 0:
                 print('Image calculation is not performed for all the three wavelengths, please check conflicting folder name(s) or non-existing SED file.')
