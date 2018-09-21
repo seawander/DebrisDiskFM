@@ -102,20 +102,22 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     except:
         pass        
     # convert the MCFOST units to Jy/arcsec^2, and calculate individual chi2
+
+    
     if STIS:
-        stis_model = fits.getdata(path_model + 'data_0.5852/RT.fits.gz')[0, 0, 0]
+        stis_model = fits.getdata(path_model + 'data_0.58/RT.fits.gz')[0, 0, 0]
         if np.nansum(np.isnan(stis_model)) != 0:
             chi2_stis = -np.inf
         else:
             stis_model[int((stis_model.shape[0]-1)/2)-2:int((stis_model.shape[0]-1)/2)+3, int((stis_model.shape[1]-1)/2)-2:int((stis_model.shape[1]-1)/2)+3] = 0
             stis_convolved = image_registration.fft_tools.convolve_nd.convolvend(stis_model, psfs[0])
-            stis_model = convertMCFOSTdataToJy(stis_convolved, wavelength = 0.5852, spatialResolution = resolution_stis) #convert to Jansky/arscec^2    
+            stis_model = convertMCFOSTdataToJy(stis_convolved, wavelength = 0.58, spatialResolution = resolution_stis) #convert to Jansky/arscec^2
             chi2_stis = chi2(stis_obs, stis_obs_unc, stis_model, lnlike = True) #return loglikelihood value for STIS
     else:
         chi2_stis = 0
     if NICMOS:
-        nicmos_model_forwarded = fm_klip.klip_fm_main(path = path_model, angles= None, psf = psfs[1]) # already convolved
-        nicmos_model = convertMCFOSTdataToJy(nicmos_model_forwarded, wavelength = 1.12347, spatialResolution = resolution_nicmos) #convert to Jansky/arscec^2
+        nicmos_model_forwarded = fm_klip.klip_fm_main(path = path_model, path_obs = path_obs, angles= None, psf = psfs[1]) # already convolved
+        nicmos_model = convertMCFOSTdataToJy(nicmos_model_forwarded, wavelength = 1.12, spatialResolution = resolution_nicmos) #convert to Jansky/arscec^2
         chi2_nicmos = chi2(nicmos_obs, nicmos_obs_unc, nicmos_model, lnlike = True) #return loglikelihood value for NICMOS       
     else:
         chi2_nicmos = 0

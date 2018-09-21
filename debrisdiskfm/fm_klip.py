@@ -109,8 +109,8 @@ def klip(trg, pcs, mask = None, klipK = None, cube = True, trg2D=True):
         return result*std
 
 
-def klip_fm_main(path = './test/', angles = None, psf = None, pipeline_input = 'ALICE', alice_size = None):
-    disk_model = fits.getdata(path + 'data_1.12347/RT.fits.gz')[0, 0, 0]
+def klip_fm_main(path = './test/', path_obs = None, angles = None, psf = None, pipeline_input = 'ALICE', alice_size = None):
+    disk_model = fits.getdata(path + 'data_1.12/RT.fits.gz')[0, 0, 0]
     disk_model[int((disk_model.shape[0]-1)/2)-2:int((disk_model.shape[0]-1)/2)+3, int((disk_model.shape[0]-1)/2)-2:int((disk_model.shape[0]-1)/2)+3] = 0
     # Exclude the star in the above line
     if psf is not None:
@@ -120,9 +120,10 @@ def klip_fm_main(path = './test/', angles = None, psf = None, pipeline_input = '
         convolved0 = image_registration.fft_tools.convolve_nd.convolvend(disk_model, psf)
         disk_model = convolved0
     
-    
-    components = fits.getdata('./data_observation/NICMOS/HD-191089_NICMOS_F110W_Lib-84_KL-19_KLmodes.fits')
-    mask = fits.getdata('./data_observation/NICMOS/HD-191089_NICMOS_F110W_Lib-84_KL-19_Mask.fits')
+    if path_obs is None:
+        path_obs = './data_observation/'
+    components = fits.getdata(path_obs + 'NICMOS/HD-191089_NICMOS_F110W_Lib-84_KL-19_KLmodes.fits')
+    mask = fits.getdata(path_obs + 'NICMOS/HD-191089_NICMOS_F110W_Lib-84_KL-19_Mask.fits')
     if angles is None:
         angles = np.concatenate([[19.5699]*4, [49.5699]*4]) # The values are hard coded for HD 191089 NICMOS observations, pelase change it for other targets.
 

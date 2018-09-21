@@ -36,7 +36,6 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
         except:
             print('This folder is not successfully removed.')
         return -np.inf
-        
     try:                                # if run is successful, calculate the posterior
         if hash_address:
             ln_likelihood = lnlike.lnlike_hd191089(path_obs = path_obs, path_model = path_model, hash_address = hash_address, hash_string = hash_string, STIS = STIS, NICMOS = NICMOS, GPI = GPI)
