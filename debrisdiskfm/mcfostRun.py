@@ -68,9 +68,9 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
     param_hd191089['#Grain properties']['zone0']['species1']['row3']['amax'] = 1e3
     param_hd191089['#Grain properties']['zone0']['species2']['row3']['amax'] = 1e3
 
-    param_hd191089['#Grain properties']['zone0']['species0']['row1']['Optical indices file'] = 'MgSiO3.dat'    #'dlsi_opct.dat'
-    param_hd191089['#Grain properties']['zone0']['species1']['row1']['Optical indices file'] = 'lgsi_opct.dat'  #'ac_opct.dat'
-    param_hd191089['#Grain properties']['zone0']['species2']['row1']['Optical indices file'] = 'Fe-Posch.dat' #'ice_opct.dat'
+    param_hd191089['#Grain properties']['zone0']['species0']['row1']['Optical indices file'] = 'dlsi_opct.dat'  #'MgSiO3.dat'
+    param_hd191089['#Grain properties']['zone0']['species1']['row1']['Optical indices file'] = 'ac_opct.dat'    #'lgsi_opct.dat'
+    param_hd191089['#Grain properties']['zone0']['species2']['row1']['Optical indices file'] = 'ice_opct.dat'   #'Fe-Posch.dat'
 
     param_hd191089['#Star properties']['star0']['row0']['Temp'] = 6440
     param_hd191089['#Star properties']['star0']['row0']['radius'] = 1.4
