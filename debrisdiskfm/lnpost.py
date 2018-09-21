@@ -4,7 +4,7 @@ from . import mcfostRun
 import numpy as np
 import shutil
 
-def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False, hash_address = True, STIS = False, NICMOS = False, GPI = True):
+def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False, hash_address = True, STIS = True, NICMOS = True, GPI = True):
     """Returns the log-posterior probability (post = prior * likelihood, thus lnpost = lnprior + lnlike)
     for a given parameter combination.
     Input:  var_values: number array, values for var_names. Refer to mcfostRun() for details. 
