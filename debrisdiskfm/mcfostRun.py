@@ -254,6 +254,8 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
             shutil.rmtree(paraPath_hash)
             
         os.mkdir(paraPath_hash)
+        
+        os.chdir(paraPath_hash) 
     else:
         os.chdir(paraPath)                      # Now everthing is stored in the `paraPath` folder.
         
