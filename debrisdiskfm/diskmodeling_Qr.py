@@ -6,8 +6,8 @@ import numpy as np
 def radialStokes(modeldata = None, mcfostGenerated = True, q = None, u = None):
     if mcfostGenerated:
         #if modeldata has the structure of MCFOST image output
-        q = -modeldata[1, 0, 0]
-        u = -modeldata[2, 0, 0] # convert the IAU's Q and U to GPI's convention
+        q = modeldata[1, 0, 0]
+        u = modeldata[2, 0, 0] # load MCFOST Polarimetry data
     
     x_cen = (q.shape[1] - 1)/2.0
     y_cen = (q.shape[0] - 1)/2.0
