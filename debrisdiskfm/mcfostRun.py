@@ -89,7 +89,8 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
     var_values_all = [59.7, 70, -7, 
                      44.0, 26, 3.6,  78, -5.3, 0.5,
                     0.3, 0.3,
-                    1.0, 3.5, 1.812, 'DHS', 0.7]
+                    -1.0, 3.5, 1.812, 'DHS', 0.7]
+    # Note: a_min and m_disk are in log scale, i.e., the actual mass is 10**(value).
     if var_names is None:
         var_names = var_names_all    #The above treatment allows for small paramter searching
     if var_values is None:    
@@ -169,13 +170,13 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
                 
         elif var_name == 'a_min':
             if var_name in var_names:
-                param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = round(theta[var_name], 3)
-                param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = round(theta[var_name], 3)
-                param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = round(theta[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = format(10**theta[var_name], '.3e')
+                param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = format(10**theta[var_name], '.3e')
+                param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = format(10**theta[var_name], '.3e')
             else:
-                param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = round(theta_all[var_name], 3)
-                param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = round(theta_all[var_name], 3)
-                param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = round(theta_all[var_name], 3)
+                param_hd191089['#Grain properties']['zone0']['species0']['row3']['amin'] = format(10**theta_all[var_name], '.3e')
+                param_hd191089['#Grain properties']['zone0']['species1']['row3']['amin'] = format(10**theta_all[var_name], '.3e')
+                param_hd191089['#Grain properties']['zone0']['species2']['row3']['amin'] = format(10**theta_all[var_name], '.3e')
         elif var_name == 'Q_powerlaw':
             if var_name in var_names:
                 param_hd191089['#Grain properties']['zone0']['species0']['row3']['aexp'] = round(theta[var_name], 3)
