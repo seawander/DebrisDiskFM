@@ -103,7 +103,6 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         pass        
     # convert the MCFOST units to Jy/arcsec^2, and calculate individual chi2
 
-    
     if STIS:
         stis_model = fits.getdata(path_model + 'data_0.58/RT.fits.gz')[0, 0, 0]
         if np.nansum(np.isnan(stis_model)) != 0:
@@ -112,27 +111,29 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
             stis_model[int((stis_model.shape[0]-1)/2)-2:int((stis_model.shape[0]-1)/2)+3, int((stis_model.shape[1]-1)/2)-2:int((stis_model.shape[1]-1)/2)+3] = 0
             stis_convolved = image_registration.fft_tools.convolve_nd.convolvend(stis_model, psfs[0])
             stis_model = convertMCFOSTdataToJy(stis_convolved, wavelength = 0.58, spatialResolution = resolution_stis) #convert to Jansky/arscec^2
-            chi2_stis = chi2(stis_obs, stis_obs_unc, stis_model, lnlike = True) #return loglikelihood value for STIS
+            mask_stis = dependencies.annulusMask(stis_model.shape[0], r_in = 0, r_out=30)
+            mask_stis[np.isnan(stis_obs_unc)] = 0
+            chi2_stis = chi2(stis_obs, stis_obs_unc*mask_stis, stis_model, lnlike = True) #return loglikelihood value for STIS
     else:
         chi2_stis = 0
     if NICMOS:
         nicmos_model_forwarded = fm_klip.klip_fm_main(path = path_model, path_obs = path_obs, angles= None, psf = psfs[1]) # already convolved
         nicmos_model = convertMCFOSTdataToJy(nicmos_model_forwarded, wavelength = 1.12, spatialResolution = resolution_nicmos) #convert to Jansky/arscec^2
-        chi2_nicmos = chi2(nicmos_obs, nicmos_obs_unc, nicmos_model, lnlike = True) #return loglikelihood value for NICMOS       
+        mask_nicmos = dependencies.annulusMask(nicmos_model.shape[0], r_in = 0, r_out = 20)
+        mask_nicmos[np.isnan(nicmos_obs_unc)] = 0
+        
+        chi2_nicmos = chi2(nicmos_obs, nicmos_obs_unc*mask_nicmos, nicmos_model, lnlike = True) #return loglikelihood value for NICMOS       
     else:
         chi2_nicmos = 0
     if GPI:
         gpi_model = diskmodeling_Qr.diskmodeling_Qr_main(path = path_model, fwhm = 3.8)
-        mask_gpi = 1#fits.getdata(path_obs + 'GPI/calibrated/mask_gpi.fits') # create an annulus mask with r_in to r_out being 1 (0 otherwise) to avoid extreme GPI observation values
-        
-        # return gpi_model*mask_gpi
-        
+        mask_gpi = dependencies.annulusMask(gpi_model.shape[0], r_in = 15, r_out = 85)        
         if np.nansum(np.isnan(gpi_model)) != 0:
             chi2_gpi = -np.inf
         else:
             # FWHM = 3.8 for GPI, as provided in Tom Esposito's HD35841 paper (Section: MCMC Modeling Procedure)
             gpi_model = convertMCFOSTdataToJy(gpi_model, wavelength = 1.65, spatialResolution = resolution_gpi) #convert to Jansky/arscec^2
-            chi2_gpi = chi2(gpi_obs*mask_gpi, gpi_obs_unc*mask_gpi, gpi_model*mask_gpi, lnlike = True) #return loglikelihood value for GPI
+            chi2_gpi = chi2(gpi_obs*mask_gpi, gpi_obs_unc*mask_gpi/5, gpi_model, lnlike = True) #return loglikelihood value for GPI             #NOTE: Magic number of 5 to boost the SNR is used!
     else:
         chi2_gpi = 0
 
