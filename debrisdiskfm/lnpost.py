@@ -27,9 +27,9 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
     run_flag = 1
     try:
         if hash_address:
-            run_flag, hash_string = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address, STIS = STIS, NICMOS = NICMOS, GPI = GPI)
+            run_flag, hash_string = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address, STIS = STIS, NICMOS = NICMOS, GPI = GPI, Fe_composition = Fe_composition)
         else:
-            run_flag = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address, STIS = STIS, NICMOS = NICMOS, GPI = GPI)
+            run_flag = mcfostRun.run_hd191089(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = True, hash_address = hash_address, STIS = STIS, NICMOS = NICMOS, GPI = GPI, Fe_composition = Fe_composition)
     except:
         pass
         
