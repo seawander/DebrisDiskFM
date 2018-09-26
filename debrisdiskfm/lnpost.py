@@ -4,7 +4,7 @@ from . import mcfostRun
 import numpy as np
 import shutil
 
-def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False, hash_address = True, STIS = True, NICMOS = True, GPI = True):
+def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False, hash_address = True, STIS = True, NICMOS = True, GPI = True, Fe_composition = False):
     """Returns the log-posterior probability (post = prior * likelihood, thus lnpost = lnprior + lnlike)
     for a given parameter combination.
     Input:  var_values: number array, values for var_names. Refer to mcfostRun() for details. 
@@ -13,6 +13,12 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
             path_obs: string, address where the observed values are stored.
             path_model: string, address where you would like to store the MCFOST raw models (not forwarded ones).
             calcSED: boolean, whether to calculate the SED of the system.
+            hash_address: boolean, "True" strongly suggested for parallel computation efficiency--folders with different names will be created and visited.
+            STIS: boolean, whether to calculate the STIS data?
+            NICMOS: boolean, wheter to calculate the NICMOS data?
+            GPI: boolean, whether to calculate the GPI data?
+            Fe_composition: boolean, default is False (i.e., use amorphous Silicates, amorphous Carbon, and water Ice);
+                                    if True, water ice will be switched to Fe-Posch.
     Output: log-posterior probability."""
     ln_prior = lnprior.lnprior_hd191089(var_names = var_names, var_values = var_values)
     if not np.isfinite(ln_prior):
