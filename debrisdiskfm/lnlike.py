@@ -133,7 +133,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         else:
             # FWHM = 3.8 for GPI, as provided in Tom Esposito's HD35841 paper (Section: MCMC Modeling Procedure)
             gpi_model = convertMCFOSTdataToJy(gpi_model, wavelength = 1.65, spatialResolution = resolution_gpi) #convert to Jansky/arscec^2
-            chi2_gpi = chi2(gpi_obs*mask_gpi, gpi_obs_unc*mask_gpi/5, gpi_model, lnlike = True) #return loglikelihood value for GPI             #NOTE: Magic number of 5 to boost the SNR is used!
+            chi2_gpi = chi2(gpi_obs*mask_gpi, gpi_obs_unc*mask_gpi, gpi_model, lnlike = True) #return loglikelihood value for GPI             #NOTE: Magic number of 5 to boost the SNR is used!
     else:
         chi2_gpi = 0
 
