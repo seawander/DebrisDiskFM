@@ -10,7 +10,7 @@ def lnprior_hd191089(var_names = None, var_values = None):
     if var_values is None:    
         var_values = [59.7, 70, -7, 
                          45.3, 20, 3.5,  -3.5, 0.1,
-                        0.05, 0.9,
+                        0.0, 0.0,
                         1.0, 3.5]
     var_values = list(np.round(var_values, 3)) #round to 3 decimal digits
                         
@@ -25,7 +25,7 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (-5 < (theta['PA'] - 70) < 5):
                 return -np.inf
         elif var_name == 'm_disk':
-            if not (-12 < theta['m_disk'] < -4):
+            if not (-10 < theta['m_disk'] < -6):
                 return -np.inf
         elif var_name == 'Rc':
             if not (-10 < (theta['Rc'] - 45.3) < 10):
@@ -40,16 +40,16 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (-15 < theta['alpha_out'] < 0):
                 return -np.inf
         elif var_name == 'porosity':
-            if not (0 < theta['porosity'] < 1):
+            if not (0 <= theta['porosity'] <= 1):
                 return -np.inf
         elif var_name == 'fmass_0':
-            if not (0 < theta['fmass_0'] < 1) or (not (0 < theta['fmass_1'] < 1)) or (not (0 < (theta['fmass_0'] + theta['fmass_1']) < 1)):
+            if not (0 <= theta['fmass_0'] <= 1) or (not (0 <= theta['fmass_1'] <= 1)) or (not (0 <= (theta['fmass_0'] + theta['fmass_1']) <= 1)):
                 return -np.inf
         elif var_name == 'a_min':
-            if not (-3 < theta['a_min'] < 2):
+            if not (-3 < theta['a_min'] < 1):
                 return -np.inf
         elif var_name == 'Q_powerlaw':
-            if not (0 < theta['Q_powerlaw'] < 5):
+            if not (3 < theta['Q_powerlaw'] < 6):
                 return -np.inf
     return 0
     # if ((-10 < (theta['inc'] - 59.7) < 10) and \
