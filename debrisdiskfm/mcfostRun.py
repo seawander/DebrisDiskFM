@@ -92,7 +92,7 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
                      'a_min', 'Q_powerlaw', 'scale height', 'grain type', 'Vmax']
     var_values_all = [59.7, 70, -7, 
                      44.0, 26, 3.6,  78, -5.3, 0.5,
-                    0.0, 0.0,
+                    0.00001, 0.00001,
                     -1.0, 4.5, 1.812, 'DHS', 0.7]
     # Note: a_min and m_disk are in log scale, i.e., the actual mass is 10**(value).
     if var_names is None:
@@ -163,13 +163,14 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
                 param_hd191089['#Grain properties']['zone0']['species1']['row0']['porosity'] = round(theta_all[var_name], 3)
                 param_hd191089['#Grain properties']['zone0']['species2']['row0']['porosity'] = round(theta_all[var_name], 3)                  
         elif var_name == 'fmass_0':
+            precision = 5
             if var_name in var_names:
-                param_hd191089['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta[var_name], 3)
-                param_hd191089['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta['fmass_1'], 3)
+                param_hd191089['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta[var_name], precision)
+                param_hd191089['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta['fmass_1'], precision)
                 param_hd191089['#Grain properties']['zone0']['species2']['row0']['mass fraction'] = round(1 - theta[var_name] - theta['fmass_1'], 3)
             else:
-                param_hd191089['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta_all[var_name], 3)
-                param_hd191089['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta_all['fmass_1'], 3)
+                param_hd191089['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta_all[var_name], precision)
+                param_hd191089['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta_all['fmass_1'], precision)
                 param_hd191089['#Grain properties']['zone0']['species2']['row0']['mass fraction'] = round(1 - theta_all[var_name] - theta_all['fmass_1'], 3)
                 
         elif var_name == 'a_min':
