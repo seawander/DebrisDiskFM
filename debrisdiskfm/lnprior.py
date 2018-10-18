@@ -6,12 +6,12 @@ def lnprior_hd191089(var_names = None, var_values = None):
         var_names = ['inc', 'PA', 'm_disk', 
                      'Rc', 'R_in', 'alpha_in', 'alpha_out', 'porosity', 
                      'fmass_0', 'fmass_1', 
-                     'a_min', 'Q_powerlaw']
+                     'a_min', 'Q_powerlaw', 'Vmax']
     if var_values is None:    
         var_values = [59.7, 70, -7, 
                          45.3, 20, 3.5,  -3.5, 0.1,
                         0.0, 0.0,
-                        1.0, 3.5]
+                        1.0, 3.5, 0.7]
     var_values = list(np.round(var_values, 3)) #round to 3 decimal digits
                         
     # The MCFOST definition of inclination and position angle is not what we have been using.
@@ -25,7 +25,7 @@ def lnprior_hd191089(var_names = None, var_values = None):
             if not (-5 < (theta['PA'] - 70) < 5):
                 return -np.inf
         elif var_name == 'm_disk':
-            if not (-10 < theta['m_disk'] < -6):
+            if not (-12 < theta['m_disk'] < -4):
                 return -np.inf
         elif var_name == 'Rc':
             if not (-10 < (theta['Rc'] - 45.3) < 10):
@@ -50,6 +50,9 @@ def lnprior_hd191089(var_names = None, var_values = None):
                 return -np.inf
         elif var_name == 'Q_powerlaw':
             if not (3 < theta['Q_powerlaw'] < 6):
+                return -np.inf
+        elif var_name == 'Vmax':
+            if not (0 <= theta['Vmax'] <= 1):
                 return -np.inf
     return 0
     # if ((-10 < (theta['inc'] - 59.7) < 10) and \
