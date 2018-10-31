@@ -93,7 +93,7 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
     var_values_all = [59.7, 70, -7, 
                      44.0, 26, 3.6,  78, -5.3, 0.0,
                     0.00001, 0.00001,
-                    -1.0, 4.5, 1.812, 'DHS', 0.7]
+                    -1.0, 3.5, 1.812, 'DHS', 0.7]
     # Note: a_min and m_disk are in log scale, i.e., the actual mass is 10**(value).
     if var_names is None:
         var_names = var_names_all    #The above treatment allows for small paramter searching
