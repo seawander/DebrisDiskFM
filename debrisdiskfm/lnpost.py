@@ -4,7 +4,7 @@ from . import mcfostRun
 import numpy as np
 import shutil
 
-def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False, hash_address = True, STIS = True, NICMOS = True, GPI = True, Fe_composition = False):
+def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_model = None, calcSED = False, hash_address = True, STIS = True, NICMOS = True, GPI = True, Fe_composition = False, pit = False, pit_input = None):
     """Returns the log-posterior probability (post = prior * likelihood, thus lnpost = lnprior + lnlike)
     for a given parameter combination.
     Input:  var_values: number array, values for var_names. Refer to mcfostRun() for details. 
@@ -19,8 +19,20 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
             GPI: boolean, whether to calculate the GPI data?
             Fe_composition: boolean, default is False (i.e., use amorphous Silicates, amorphous Carbon, and water Ice);
                                     if True, water ice will be switched to Fe-Posch.
+            pit: boolean, whether to use Probability Integral Transform (PIT) to sample from the posteriors from the previous MCMC run?
+                If True, then `pit_input` cannot be None
+            pit_input: 2D array/matrix, input MCMC posterior from last run, if not None, only when `pit == True` will it be considered
     Output: log-posterior probability."""
+    if pit:
+        var_values_percentiles = np.copy(var_values)
+        for percentile in var_values_percentiles:
+            if not (0 <= percentile <= 100):
+                return -np.inf                  #only accept percentiles ranging from 0 to 100 (PIT requirement)
+        for i, percentile in enumerate(var_values_percentiles):
+            var_values[i] = np.nanpercentile(pit_input[:, i], percentile)
+        
     ln_prior = lnprior.lnprior_hd191089(var_names = var_names, var_values = var_values)
+    
     if not np.isfinite(ln_prior):
         return -np.inf
         
