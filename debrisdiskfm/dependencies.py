@@ -153,9 +153,10 @@ def cutImage(image, halfSize, x_cen = None, y_cen = None, halfSizeX = None, half
     
     return newImage*maskInterped
     
-def bin_data(data, bin_size = 3, data_type = 'data', bin_method = 'average'):
+def bin_data(data, bin_size = 3, data_type = 'data', bin_method = 'average', mask_thresh = 0.9):
     """Bin the data with a bin_size*bin_size box. If the data_type is `data`, then a simple addition is performed,
     if it is an `uncertainty` map, then the square root of the squared sums are returned.
+    if it is a `mask` (binary: 0 and 1), then the value that are smaller <= mask_thresh are treated as 0, and 1 otherwise
     
     The bin_method can be assigned with 'average' or 'sum':
         if 'sum', the raw binned data will be returned;
@@ -163,6 +164,10 @@ def bin_data(data, bin_size = 3, data_type = 'data', bin_method = 'average'):
     """
     if data_type == 'uncertainty':
         data = data**2
+    if len(data.shape) == 3: # a cube
+        result = np.array([bin_data(data[i], bin_size = bin_size, data_type = data_type, bin_method = bin_method) for i in range(data.shape[0])])
+        return result
+                
     total_size = np.ceil(data.shape[0] / bin_size) * bin_size
     half_size = (total_size - 1)/2.0
     data_extended = cutImage(data, halfSize=half_size)
@@ -175,12 +180,17 @@ def bin_data(data, bin_size = 3, data_type = 'data', bin_method = 'average'):
     if bin_method == 'sum':
         if data_type == 'uncertainty':
             return np.sqrt(data_binned)
+        elif data_type == 'mask':
+            raise Exception('Please use `average` for the bin_method option for a mask!')
     elif bin_method == 'average':
         if data_type == 'data':
             data_binned /= bin_size**2
         elif data_type == 'uncertainty':
             data_binned = np.sqrt(data_binned)
             data_binned/= bin_size**2 #the extra power of 2 is because the raw data is squared for the uncertainty map
+        elif data_type == 'mask':
+            data_binned[np.where(data_binned <= mask_thresh)] = 0
+            data_binned[np.where(data_binned != 0)] = 1
     return data_binned
     
 def rotateImage(cube, mask = None, angle = None, reshape = False, new_width = None, new_height = None, thresh = 0.9, maskedNaN = False, outputMask = True, instrument = None):
