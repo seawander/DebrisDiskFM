@@ -137,3 +137,18 @@ sbatch sub_mcmc_cluster
 and wait for the results!
 
 For more detailed explanation of the script, please go to [DebrisDiskFM/cluster_example_emcee/](https://github.com/seawander/DebrisDiskFM/tree/master/cluster_example_emcee).
+
+*BibTex*:
+```
+@misc{debrisdiskFM,
+  author       = { {Ren}, Bin and {Perrin}, Marshall },
+  title        = {DebrisDiskFM, v1.0, Zenodo,
+doi: \href{https://zenodo.org/badge/latestdoi/141328805}{10.5281/zenodo.2398963}. },
+  version = {1.0},
+  publisher = {Zenodo},
+  month        = Dec,
+  year         = 2018,
+  doi          = {10.5281/zenodo.2398963},
+  url          = {https://doi.org/10.5281/zenodo.2398963}
+}
+```
