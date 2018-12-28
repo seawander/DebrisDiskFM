@@ -197,6 +197,8 @@ def run_hd191089(var_names = None, var_values = None, paraPath = None, calcSED =
             else:
                 param_hd191089['#Density structure']['zone0']['row2']['scale height'] = round(theta_all[var_name], 3)
         elif var_name == 'grain type':
+            if round(theta['Vmax'], 3) == 0: #jump to Mie case if the Vmax value is 0
+                theta[var_name] = 'Mie'
             if var_name in var_names:
                 param_hd191089['#Grain properties']['zone0']['species0']['row0']['Grain type'] = theta[var_name]
                 param_hd191089['#Grain properties']['zone0']['species1']['row0']['Grain type'] = theta[var_name]
