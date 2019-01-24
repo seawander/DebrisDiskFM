@@ -26,7 +26,7 @@ def lnpost_hd191089(var_values = None, var_names = None, path_obs = None, path_m
     if pit:
         var_values_percentiles = np.copy(var_values)
         for percentile in var_values_percentiles:
-            if not (0 <= percentile <= 100):
+            if not (5 <= percentile <= 95):
                 return -np.inf                  #only accept percentiles ranging from 0 to 100 (PIT requirement)
         for i, percentile in enumerate(var_values_percentiles):
             var_values[i] = np.nanpercentile(pit_input[:, i], percentile)
