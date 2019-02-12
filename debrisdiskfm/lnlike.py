@@ -56,14 +56,17 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         stis_obs = fits.getdata(path_obs + 'STIS/calibrated/HD-191089_Signal_Jy_arcsec-2_oddSize.fits')
         stis_obs_unc = fits.getdata(path_obs + 'STIS/calibrated/HD-191089_NoiseMap_Jy_arcsec-2_oddSize.fits')
         stis_obs_unc[np.where(stis_obs_unc <=0)] = np.nan
+        mask_stis = fits.getdata(path_obs + 'STIS/calibrated/mask_stis.fits')
     if NICMOS:
         nicmos_obs = fits.getdata(path_obs + 'NICMOS/calibrated/HD-191089_NICMOS_F110W_Lib-84_KL-19_Signal-Jy_arcsec-2.fits')
         nicmos_obs_unc = fits.getdata(path_obs + 'NICMOS/calibrated/HD-191089_NICMOS_F110W_Lib-84_KL-19_NoiseMap-Jy_arcsec-2.fits')
         nicmos_obs_unc[np.where(nicmos_obs_unc <=0)] = np.nan
+        mask_nicmos = fits.getdata(path_obs + 'NICMOS/calibrated/mask_nicmos.fits')
     if GPI:
         gpi_obs = fits.getdata(path_obs + 'GPI/calibrated/hd191089_gpi_smooth_mJy_arcsec2.fits')/1e3 #Turn it to Jy/arcsec^2
         gpi_obs_unc = fits.getdata(path_obs + 'GPI/calibrated/hd191089_gpi_smooth_mJy_arcsec2_noisemap.fits')/1e3 #Turn it to Jy/arcsec^2
         gpi_obs_unc[np.where(gpi_obs_unc <=0)] = np.nan
+        mask_gpi = fits.getdata(path_obs + 'GPI/calibrated/mask_gpi.fits')
     
     resolution_stis = 0.05078 # arcsec/pixel
     resolution_gpi = 14.166e-3
@@ -111,7 +114,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
             stis_model[int((stis_model.shape[0]-1)/2)-2:int((stis_model.shape[0]-1)/2)+3, int((stis_model.shape[1]-1)/2)-2:int((stis_model.shape[1]-1)/2)+3] = 0
             stis_convolved = image_registration.fft_tools.convolve_nd.convolvend(stis_model, psfs[0])
             stis_model = convertMCFOSTdataToJy(stis_convolved, wavelength = 0.58, spatialResolution = resolution_stis) #convert to Jansky/arscec^2
-            mask_stis = dependencies.annulusMask(stis_model.shape[0], r_in = 0, r_out=30)
+            # mask_stis = dependencies.annulusMask(stis_model.shape[0], r_in = 0, r_out=30) #define your own mask here
             mask_stis[np.isnan(stis_obs_unc)] = 0
             chi2_stis = chi2(stis_obs, stis_obs_unc*mask_stis, stis_model, lnlike = True) #return loglikelihood value for STIS
     else:
@@ -119,7 +122,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
     if NICMOS:
         nicmos_model_forwarded = fm_klip.klip_fm_main(path = path_model, path_obs = path_obs, angles= None, psf = psfs[1]) # already convolved
         nicmos_model = convertMCFOSTdataToJy(nicmos_model_forwarded, wavelength = 1.12, spatialResolution = resolution_nicmos) #convert to Jansky/arscec^2
-        mask_nicmos = dependencies.annulusMask(nicmos_model.shape[0], r_in = 0, r_out = 20)
+        # mask_nicmos = dependencies.annulusMask(nicmos_model.shape[0], r_in = 0, r_out = 20) #define your own mask here
         mask_nicmos[np.isnan(nicmos_obs_unc)] = 0
         
         chi2_nicmos = chi2(nicmos_obs, nicmos_obs_unc*mask_nicmos, nicmos_model, lnlike = True) #return loglikelihood value for NICMOS       
@@ -127,7 +130,7 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         chi2_nicmos = 0
     if GPI:
         gpi_model = diskmodeling_Qr.diskmodeling_Qr_main(path = path_model, fwhm = 3.8)
-        mask_gpi = dependencies.annulusMask(gpi_model.shape[0], r_in = 15, r_out = 85)        
+        # mask_gpi = dependencies.annulusMask(gpi_model.shape[0], r_in = 15, r_out = 85)   #define your own mask here
         if np.nansum(np.isnan(gpi_model)) != 0:
             chi2_gpi = -np.inf
         else:
