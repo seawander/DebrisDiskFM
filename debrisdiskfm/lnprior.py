@@ -8,8 +8,8 @@ def lnprior_hd191089(var_names = None, var_values = None):
                      'fmass_0', 'fmass_1', 
                      'a_min', 'Q_powerlaw', 'Vmax']
     if var_values is None:    
-        var_values = [59.7, 70, -7, 
-                         45.3, 20, 3.5,  -3.5, 0.1,
+        var_values = [59.5, 70.3, -7, 
+                         43.6, 20, 5.9,  -5.1, 0.1,
                         0.0, 0.0,
                         1.0, 3.5, 0.7]
     var_values = list(np.round(var_values, 3)) #round to 3 decimal digits
