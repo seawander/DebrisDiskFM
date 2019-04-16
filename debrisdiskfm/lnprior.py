@@ -74,3 +74,59 @@ def lnprior_hd191089(var_names = None, var_values = None):
            
     
     
+def lnprior_hr4796aH2spf(var_names = None, var_values = None):
+    """This code sets the prior for the MCMC modeling of the HR 4796A H2 SPF."""
+    if var_names is None:
+        var_names = ['inc', 'PA', 'm_disk', 
+                     'Rc', 'R_in', 'alpha_in', 'R_out', 'alpha_out', 'porosity', 
+                     'fmass_0', 'fmass_1', 
+                     'a_min', 'Q_powerlaw', 'scale height', 'Vmax']
+    if var_values is None:    
+        var_values = [76.45, 27.1, -6, 
+                     76.7, 72.2, 5.25,  91.7, -6.8, 0.2,
+                    0.6, 0.2,
+                    1.0, 3.5, 3.07, 0.6]
+    var_values = list(np.round(var_values, 3)) #round to 3 decimal digits
+                        
+    # The MCFOST definition of inclination and position angle is not what we have been using.
+
+    theta = dict(zip(var_names, var_values))
+    for var_name in var_names:
+        if var_name == 'inc':
+            if not (-5 < (theta['inc'] - 76.45) < 5):
+                return -np.inf
+        elif var_name == 'PA':
+            if not (-5 < (theta['PA'] - 27.1) < 5):
+                return -np.inf
+        elif var_name == 'm_disk':
+            if not (-12 < theta['m_disk'] < -4):
+                return -np.inf
+        elif var_name == 'Rc':
+            if not (-10 < (theta['Rc'] - 76.7) < 10):
+                return -np.inf
+        elif var_name == 'R_in':
+            if not (0 < theta['R_in'] < 76.7) or not (theta['R_in'] < theta['Rc']):
+                return -np.inf
+        elif var_name == 'alpha_in':
+            if not (0 < theta['alpha_in'] < 7):
+                return -np.inf
+        elif var_name == 'alpha_out':
+            if not (-15 < theta['alpha_out'] < 0):
+                return -np.inf
+        elif var_name == 'porosity':
+            if not (0 <= theta['porosity'] <= 1):
+                return -np.inf
+        elif var_name == 'fmass_0':
+            if not (0 <= theta['fmass_0'] <= 1) or (not (0 <= theta['fmass_1'] <= 1)) or (not (0 <= (theta['fmass_0'] + theta['fmass_1']) <= 1)):
+                return -np.inf
+        elif var_name == 'a_min':
+            if not (-0.3 < theta['a_min'] < 2): #find minimum dust size between 0.5µm and 100µm
+                return -np.inf
+        elif var_name == 'Q_powerlaw':
+            if not (3 < theta['Q_powerlaw'] < 6):
+                return -np.inf
+        elif var_name == 'Vmax':
+            if not (0 <= theta['Vmax'] <= 1):
+                return -np.inf
+    return 0
+

@@ -37,6 +37,31 @@ def chi2(data, data_unc, model, lnlike = True):
         # -n/2*log(2pi) - 1/2 * chi2 - sum_i(log sigma_i) 
         return loglikelihood
     return chi2
+    
+def chi2_1dinterp(angles, data, data_unc, model, lnlike = True):
+    """Calculate the chi-squared value or log-likelihood for given data and model. 
+    Note: if data_unc has values <= 0, they will be ignored and replaced by NaN.
+    Input:  
+            angles: 1D array, observed SPF angles.
+            data: 1D array, observed SPF (normalized).
+            data_unc: 1D array, uncertainty of the observed SPF.
+            model: 1D array, MCFOST model array.
+            lnlike: boolean, if True, then the log-likelihood is returned.
+    Output: 
+            chi2: float, chi-squared or log-likelihood value."""
+    from scipy.interpolate import interp1d as interp1d
+    model_mcfost = np.copy(model)
+    func_spf = interp1d(np.arange(0, 181, 1), model_mcfost[:, 0])
+    model = func_spf(angles)
+    
+    data_unc[np.where(data_unc <= 0)] = np.nan
+    chi2 = np.nansum(((data-model)/data_unc)**2)
+    
+    if lnlike:
+        loglikelihood = -0.5*np.log(2*np.pi)*np.count_nonzero(~np.isnan(data_unc)) - 0.5*chi2 - np.nansum(np.log(data_unc))
+        # -n/2*log(2pi) - 1/2 * chi2 - sum_i(log sigma_i) 
+        return loglikelihood
+    return chi2
 
 def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw = None, hash_address = False, delete_model = True, hash_string = None, return_model_only = False, STIS = True, NICMOS = True, GPI = True):
     """Return the log-likelihood for observed data and modelled data.
@@ -158,3 +183,44 @@ def lnlike_hd191089(path_obs = None, path_model = None, psfs = None, psf_cut_hw 
         return  lnlike_total #Returns the loglikelihood
     else:
         return -np.inf
+
+
+def lnlike_hr4796aH2spf(path_obs = None, path_model = None, hash_address = False, delete_model = True, hash_string = None, return_model_only = False):
+    """Return the log-likelihood for observed data and modelled data.
+    Input:  path_obs: the path to the observed data
+            path_model: the path to the (forwarded) models
+            hash_address: whether to hash the address based on the values, if True, then the address should be provided by `hash_string'
+            delete_model: whether to delete the models. True by default.
+            return_model_only: only return the forwarded models for debug/grid-modeling purpose
+    Output: log-likelihood
+            """
+    ### Observations:
+    if path_obs is None:
+        path_obs = './data_spf/'
+    
+    data_spf = fits.getdata(path_obs + 'best_spf_sphereh2.fits')    
+    spf_angles = np.copy(data_spf[0])
+    spf_obs = np.copy(data_spf[1])
+    spf_obs_unc = np.copy(data_spf[2])
+    factor_norm = spf_obs[np.where(spf_angles == 90)] #normalization at 90 degree
+    spf_obs_unc /= factor_norm
+    spf_obs /= factor_norm
+    
+    ### (Forwarded) Models:
+    if path_model is None:
+        path_model = './mcfost_models/'
+    if hash_address:
+        if hash_string is None:
+            print('Please provide the hash string if you set hash_address = True!')
+            return -np.inf     
+        path_model = path_model[:-1] + hash_string + '/'
+        
+    spf_model_mcfost = fits.getdata(path_model + 'data_dust/phase_function.fits.gz')
+    
+    chi2_spf = chi2_1dinterp(spf_angles, spf_obs, spf_obs_unc, spf_model_mcfost, lnlike = True)
+    
+        
+    if hash_address and delete_model:    #delete the temporary MCFOST models
+        shutil.rmtree(path_model)
+    
+    return  chi2_spf #Returns the loglikelihood
