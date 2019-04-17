@@ -216,6 +216,7 @@ def lnlike_hr4796aH2spf(path_obs = None, path_model = None, hash_address = False
         path_model = path_model[:-1] + hash_string + '/'
         
     spf_model_mcfost = fits.getdata(path_model + 'data_dust/phase_function.fits.gz')
+    spf_model_mcfost /= spf_model_mcfost[90] # normalized at 90 degree angle
     
     chi2_spf = chi2_1dinterp(spf_angles, spf_obs, spf_obs_unc, spf_model_mcfost, lnlike = True)
     
