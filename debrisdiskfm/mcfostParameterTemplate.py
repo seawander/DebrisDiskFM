@@ -165,6 +165,29 @@ def generateGrainProperties(number_of_species = 0):
         for i in range(number_of_species):
             grain_properties['species' + str(i)] = copy.deepcopy(generateGrainProperties())
         return grain_properties
+        
+def generateGrainPropertiesONEspeciesNcomponents(number_of_components = 0):
+    # a template for grain property (1 species, but mixed with number_of_components components):
+    grain_properties_template = collections.OrderedDict(
+        [('row0', collections.OrderedDict([
+                   ('Grain type', 'Mie'),
+                   ('N_components', number_of_components),
+                   ('mixing rule', 1),
+                   ('porosity', 0.010),
+                   ('mass fraction', 1),
+                   ('Vmax', 0.9)]))])
+    for i in range(number_of_components):
+        grain_properties_template['row' + str(i+1)] = collections.OrderedDict([
+                                                       ('Optical indices file', 'dlsi_opct.dat'),
+                                                       ('volume fraction', 0.3)])
+    grain_properties_template['row' + str(number_of_components+1)] = collections.OrderedDict([
+                                                                    ('Heating method', 2)])
+    grain_properties_template['row' + str(number_of_components+2)] = collections.OrderedDict([
+                                                                       ('amin', 3.946),
+                                                                       ('amax', 1000.000),
+                                                                       ('aexp', 3.155),
+                                                                       ('nbr_grains', 100)])    
+    return grain_properties_template
 
 
 def generateStarProperties(n_star = 1):
@@ -192,12 +215,13 @@ def generateStarProperties(n_star = 1):
 
 # # Create the OrderdDict
 
-def generateMcfostTemplate(n_zone = 1, n_species = [1], n_star = 1):
+def generateMcfostTemplate(n_zone = 1, n_species = [1], n_star = 1, n_component = None):
     '''Generate a template dictionary (collections.OrderedDict) for n_zone zones (integer), and n_spieces (list).
     Input: (1) n_zone -- "#Number of zones" (integer), e.g., 2;
            (2) n_species -- "Number of species" in each zone (list), should have length equal to n_zone, e.g., [3, 4];
                The example means there are 2 zones, and the 1st zone has 3 grain spieces, and the 2nd has 4.
            (3) n_star -- "Number of stars" (integer), e.g., 1.
+           (4) n_component -- "Number of components" in each species. Currently ONLY support "n_species = [1]" and "n_zone = 1".
     Output: an ordered dictionary (collections.OrderdDict).
     Example:
 >>>         n_zone = 1 #2
@@ -295,13 +319,16 @@ def generateMcfostTemplate(n_zone = 1, n_species = [1], n_star = 1):
 
     paramfile_dict['#Density structure'] = generateDensityStructure(n_zone)
 
-    grain_props = collections.OrderedDict()
-    for i in range(n_zone):
-        grain = collections.OrderedDict()
-        grain_props['zone'+str(i)] = copy.deepcopy(grain)
-        grain_props['zone'+str(i)]['Number of species'] = n_species[i]
-        for j in range(n_species[i]):
-            grain_props['zone'+str(i)]['species' + str(j)] = copy.deepcopy(generateGrainProperties())
+    if n_component is None: # n spiecies, each has pure composition
+        grain_props = collections.OrderedDict()
+        for i in range(n_zone):
+            grain = collections.OrderedDict()
+            grain_props['zone'+str(i)] = copy.deepcopy(grain)
+            grain_props['zone'+str(i)]['Number of species'] = n_species[i]
+            for j in range(n_species[i]):
+                grain_props['zone'+str(i)]['species' + str(j)] = copy.deepcopy(generateGrainProperties())
+    else:   # only 1 species, but has N mixture composition
+        grain_props = generateGrainPropertiesONEspeciesNcomponents(n_component)           
         
     paramfile_dict['#Grain properties'] = grain_props
             
@@ -468,24 +495,41 @@ def print9_Density_structure(sample_para_dict):
 def print10_Grain_properties(sample_para_dict):
     block_name = '#Grain properties'
     print(block_name)
-    for zone_id in range(sample_para_dict['#Number of zones']):
-        block_zone = sample_para_dict[block_name]['zone' + str(zone_id)]
-        for category in block_zone:
-            if type(block_zone[category]) != type(collections.OrderedDict()):
-                print(block_zone[category], '\t Number of species')
+    if sample_para_dict['#Grain properties']['row0']['N_components'] is None:
+        for zone_id in range(sample_para_dict['#Number of zones']):
+            block_zone = sample_para_dict[block_name]['zone' + str(zone_id)]
+            for category in block_zone:
+                if type(block_zone[category]) != type(collections.OrderedDict()):
+                    print(block_zone[category], '\t Number of species')
+                else:
+                    for row_name in block_zone[category]:
+                        if type(block_zone[category][row_name]) != type(collections.OrderedDict()):
+                            print(block_zone[category][row_name])
+                        else:
+                            for item in block_zone[category][row_name]:
+                                print(block_zone[category][row_name][item], end = ' ')
+                            print('\t', end = '')
+                            for item in block_zone[category][row_name]:
+                                print(item, end = ', ')
+                            print('')
+                    print('')
+    else:
+        # currently *ONLY* support 1 zone, 1 species, and N components
+        block_zone = sample_para_dict[block_name]
+        print(1, 'Number of species')
+        for row_name in block_zone:
+            if type(block_zone[row_name]) != type(collections.OrderedDict()):
+                print(block_zone[row_name])
             else:
-                for row_name in block_zone[category]:
-                    if type(block_zone[category][row_name]) != type(collections.OrderedDict()):
-                        print(block_zone[category][row_name])
-                    else:
-                        for item in block_zone[category][row_name]:
-                            print(block_zone[category][row_name][item], end = ' ')
-                        print('\t', end = '')
-                        for item in block_zone[category][row_name]:
-                            print(item, end = ', ')
-                        print('')
+                for item in block_zone[row_name]:
+                    print(block_zone[row_name][item], end = ' ')
+                print('\t', end = '')
+                for item in block_zone[row_name]:
+                    print(item, end = ', ')
+                    # print('')
                 print('')
-                
+        print('')
+            
 def print11_Molecular_RT_settings(sample_para_dict):
     block_name = '#Molecular RT settings'
     print(block_name)

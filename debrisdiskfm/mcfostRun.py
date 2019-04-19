@@ -364,7 +364,7 @@ def run_hr4796aH2spf(var_names = None, var_values = None, paraPath = None, calcS
     9. `Fe_composition`: wheter to use Fe as a composition, if True, the compositions will be amorphous Silicates, amorphous Carbon, and Fe-Posch (default is False: Fe-Posch will be H2O Ice).
     """
     
-    param_hr4796aH2spf = mcfostParameterTemplate.generateMcfostTemplate(1, [3], 1)
+    param_hr4796aH2spf = mcfostParameterTemplate.generateMcfostTemplate(1, [1], 1, 3)
 
     resolution_stis = 0.05078
     resolution_gpi = 14.166e-3
@@ -377,7 +377,12 @@ def run_hr4796aH2spf(var_names = None, var_values = None, paraPath = None, calcS
     ###############################################################################################
 
     dist = 71.9
+    param_hr4796aH2spf['#Number of photon packages']['row0']['nbr_photons_eq_th'] = 1.28e6
+    param_hr4796aH2spf['#Number of photon packages']['row1']['nbr_photons_lambda'] = 5e3
+    param_hr4796aH2spf['#Wavelength']['row0']['n_lambda'] = 50
     param_hr4796aH2spf['#Grid geometry and size']['row1']['n_rad'] = 100
+    param_hr4796aH2spf['#Grid geometry and size']['row1']['nz'] = 70
+    param_hr4796aH2spf['#Grid geometry and size']['row1']['n_rad_in'] = 20
     param_hr4796aH2spf['#Maps']['row3']['distance'] = dist
 
 
@@ -386,26 +391,23 @@ def run_hr4796aH2spf(var_names = None, var_values = None, paraPath = None, calcS
     param_hr4796aH2spf['#Density structure']['zone0']['row2']['scale height'] = 3.07
     param_hr4796aH2spf['#Density structure']['zone0']['row2']['vertical profile exponent'] = 2
 
-    param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row0']['Grain type'] = 'DHS'
-    param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row0']['Grain type'] = 'DHS'
-    param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row0']['Grain type'] = 'DHS'
+    param_hr4796aH2spf['#Grain properties']['row0']['Grain type'] = 'DHS'
+    param_hr4796aH2spf['#Grain properties']['row5']['amax'] = 1e3
 
-    param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row3']['amax'] = 1e3
-    param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row3']['amax'] = 1e3
-    param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row3']['amax'] = 1e3
-
-    param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row1']['Optical indices file'] = 'MgSiO3.dat'
-    param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row1']['Optical indices file'] = 'ac_opct.dat'    #'lgsi_opct.dat'
+    param_hr4796aH2spf['#Grain properties']['row1']['Optical indices file'] = 'MgSiO3.dat'
+    param_hr4796aH2spf['#Grain properties']['row2']['Optical indices file'] = 'ac_opct.dat'    #'lgsi_opct.dat'
     if Fe_composition:
-        param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row1']['Optical indices file'] = 'Fe-Posch.dat'
+        param_hr4796aH2spf['#Grain properties']['row3']['Optical indices file'] = 'Fe-Posch.dat'
     else:
-        param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row1']['Optical indices file'] = 'ice_opct.dat'   #'Fe-Posch.dat'
+        param_hr4796aH2spf['#Grain properties']['row3']['Optical indices file'] = 'ice_opct.dat'   #'Fe-Posch.dat'
 
     param_hr4796aH2spf['#Star properties']['star0']['row0']['Temp'] = 9250
     param_hr4796aH2spf['#Star properties']['star0']['row0']['radius'] = 1.85
     param_hr4796aH2spf['#Star properties']['star0']['row0']['M'] = 1.0
+    param_hr4796aH2spf['#Star properties']['star0']['row1'] = 'Kurucz9250-4.5.fits.gz'
     param_hr4796aH2spf['#Star properties']['star0']['row2']['fUV'] = 0.00
     param_hr4796aH2spf['#Star properties']['star0']['row2']['slope_fUV'] = 0.00
+
 
 
     ###############################################################################################
@@ -416,7 +418,7 @@ def run_hr4796aH2spf(var_names = None, var_values = None, paraPath = None, calcS
                      'Rc', 'R_in', 'alpha_in', 'R_out', 'alpha_out', 'porosity', 
                      'fmass_0', 'fmass_1', 
                      'a_min', 'Q_powerlaw', 'scale height', 'grain type', 'Vmax']
-    var_values_all = [76.45, 27.1, -6, 
+    var_values_all = [76.45, 27.1, -10, 
                      76.7, 72.2, 5.25,  91.7, -6.8, 0.2,
                     0.6, 0.2,
                     1.0, 3.5, 3.07, 'DHS', 0.6] # set Vmax default = 0 (Mie theory case)
@@ -482,42 +484,30 @@ def run_hr4796aH2spf(var_names = None, var_values = None, paraPath = None, calcS
                 param_hr4796aH2spf['#Density structure']['zone0']['row5']['-gamma_exp/alpha_out'] = round(theta_all[var_name], 3)
         elif var_name == 'porosity':
             if var_name in var_names:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row0']['porosity'] = round(theta[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row0']['porosity'] = round(theta[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row0']['porosity'] = round(theta[var_name], 3)
+                param_hr4796aH2spf['#Grain properties']['row0']['porosity'] = round(theta[var_name], 3)
             else:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row0']['porosity'] = round(theta_all[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row0']['porosity'] = round(theta_all[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row0']['porosity'] = round(theta_all[var_name], 3)                  
+                param_hr4796aH2spf['#Grain properties']['row0']['porosity'] = round(theta_all[var_name], 3)                
         elif var_name == 'fmass_0':
             precision = 5
             if var_name in var_names:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta[var_name], precision)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta['fmass_1'], precision)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row0']['mass fraction'] = round(1 - theta[var_name] - theta['fmass_1'], 3)
+                param_hr4796aH2spf['#Grain properties']['row1']['volume fraction']= round(theta[var_name], precision)
+                param_hr4796aH2spf['#Grain properties']['row2']['volume fraction'] = round(theta['fmass_1'], precision)
+                param_hr4796aH2spf['#Grain properties']['row3']['volume fraction']= round(1 - theta[var_name] - theta['fmass_1'], 3)
             else:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta_all[var_name], precision)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta_all['fmass_1'], precision)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row0']['mass fraction'] = round(1 - theta_all[var_name] - theta_all['fmass_1'], 3)
+                param_hr4796aH2spf['#Grain properties']['row1']['volume fraction'] = round(theta_all[var_name], precision)
+                param_hr4796aH2spf['#Grain properties']['row2']['Ovolume fraction'] = round(theta_all['fmass_1'], precision)
+                param_hr4796aH2spf['#Grain properties']['row3']['volume fraction'] = round(1 - theta_all[var_name] - theta_all['fmass_1'], 3)
                 
         elif var_name == 'a_min':
             if var_name in var_names:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row3']['amin'] = format(10**theta[var_name], '.3e')
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row3']['amin'] = format(10**theta[var_name], '.3e')
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row3']['amin'] = format(10**theta[var_name], '.3e')
+                param_hr4796aH2spf['#Grain properties']['row5']['amin'] = format(10**theta[var_name], '.3e')
             else:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row3']['amin'] = format(10**theta_all[var_name], '.3e')
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row3']['amin'] = format(10**theta_all[var_name], '.3e')
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row3']['amin'] = format(10**theta_all[var_name], '.3e')
+                param_hr4796aH2spf['#Grain properties']['row5']['amin'] = format(10**theta_all[var_name], '.3e')
         elif var_name == 'Q_powerlaw':
             if var_name in var_names:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row3']['aexp'] = round(theta[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row3']['aexp'] = round(theta[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row3']['aexp'] = round(theta[var_name], 3)
+                param_hr4796aH2spf['#Grain properties']['row5']['aexp'] = round(theta[var_name], 3)
             else:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row3']['aexp'] = round(theta_all[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row3']['aexp'] = round(theta_all[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row3']['aexp'] = round(theta_all[var_name], 3)
+                param_hr4796aH2spf['#Grain properties']['row5']['aexp'] = round(theta_all[var_name], 3)
         elif var_name == 'scale height':
             if var_name in var_names:
                 param_hr4796aH2spf['#Density structure']['zone0']['row2']['scale height'] = round(theta[var_name], 3)
@@ -527,33 +517,25 @@ def run_hr4796aH2spf(var_names = None, var_values = None, paraPath = None, calcS
             if not ('Vmax' in theta): # if 'Vmax' is not given in the input, then Mie theory is assumed
                 theta_all[var_name] = 'Mie'
             if var_name in var_names:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row0']['Grain type'] = theta[var_name]
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row0']['Grain type'] = theta[var_name]
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row0']['Grain type'] = theta[var_name]
+                param_hr4796aH2spf['#Grain properties']['row0']['Grain type'] = theta[var_name]
             else:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row0']['Grain type'] = theta_all[var_name]
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row0']['Grain type'] = theta_all[var_name]
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row0']['Grain type'] = theta_all[var_name]
+                param_hr4796aH2spf['#Grain properties']['row0']['Grain type'] = theta_all[var_name]
         elif var_name == 'Vmax':
             if var_name in var_names:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row0']['Vmax'] = round(theta[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row0']['Vmax'] = round(theta[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row0']['Vmax'] = round(theta[var_name], 3)
+                param_hr4796aH2spf['#Grain properties']['row0']['Vmax'] = round(theta[var_name], 3)
             else:
-                param_hr4796aH2spf['#Grain properties']['zone0']['species0']['row0']['Vmax'] = round(theta_all[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species1']['row0']['Vmax'] = round(theta_all[var_name], 3)
-                param_hr4796aH2spf['#Grain properties']['zone0']['species2']['row0']['Vmax'] = round(theta_all[var_name], 3)
+                param_hr4796aH2spf['#Grain properties']['row0']['Vmax'] = round(theta_all[var_name], 3)
     ###############################################################################################
     ########################### Section 3: Parameter File for HD191089 ############################
     ######################### Instrument-specific adjusts for the system. #########################
     ###############################################################################################
 
-    param_hr4796aH2spf_stis = copy.deepcopy(param_hr4796aH2spf)
+    param_hr4796aH2spf = copy.deepcopy(param_hr4796aH2spf)
     sphere_width = 201
-    param_hr4796aH2spf_stis['#Wavelength']['row3']['stokes parameters?'] = 'F'
-    param_hr4796aH2spf_stis['#Maps']['row0']['nx'] = sphere_width
-    param_hr4796aH2spf_stis['#Maps']['row0']['ny'] = sphere_width
-    param_hr4796aH2spf_stis['#Maps']['row0']['size'] = np.round(dist * sphere_width * resolution_sphere, 3)
+    param_hr4796aH2spf['#Wavelength']['row3']['stokes parameters?'] = 'F'
+    param_hr4796aH2spf['#Maps']['row0']['nx'] = sphere_width
+    param_hr4796aH2spf['#Maps']['row0']['ny'] = sphere_width
+    param_hr4796aH2spf['#Maps']['row0']['size'] = np.round(dist * sphere_width * resolution_sphere, 3)
 
     if paraPath is None:
         paraPath = './mcfost_models/'
@@ -581,7 +563,7 @@ def run_hr4796aH2spf(var_names = None, var_values = None, paraPath = None, calcS
         
     flag_SPHERE = 0
 
-    mcfostParameterTemplate.display_file(param_hr4796aH2spf_stis, 'hr4796a_sphere.para')
+    mcfostParameterTemplate.display_file(param_hr4796aH2spf, 'hr4796a_sphere.para')
     flag_SPHERE = 1
 
     if paramfiles_only:
