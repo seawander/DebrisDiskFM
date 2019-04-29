@@ -393,7 +393,7 @@ def run_hr4796aH2spf(var_names = None, var_values = None, paraPath = None, calcS
 
     param_hr4796aH2spf['#Grain properties']['row0']['Grain type'] = 'DHS'
     param_hr4796aH2spf['#Grain properties']['row5']['amax'] = 1e3
-    param_hr4796aH2spf['#Grain properties']['row5']['nbr_grains'] = 200
+    param_hr4796aH2spf['#Grain properties']['row5']['nbr_grains'] = 800
     
 
     param_hr4796aH2spf['#Grain properties']['row1']['Optical indices file'] = 'MgSiO3.dat'
