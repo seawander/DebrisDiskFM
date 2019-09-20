@@ -495,7 +495,26 @@ def print9_Density_structure(sample_para_dict):
 def print10_Grain_properties(sample_para_dict):
     block_name = '#Grain properties'
     print(block_name)
-    if sample_para_dict['#Grain properties']['row0']['N_components'] is None:
+    try:
+        if sample_para_dict['#Grain properties']['row0']['N_components'] is not None:
+            # not weighted average of different dust components, but they interact with each other
+            # currently *ONLY* support 1 zone, 1 species, and N components
+            block_zone = sample_para_dict[block_name]
+            print(1, 'Number of species')
+            for row_name in block_zone:
+                if type(block_zone[row_name]) != type(collections.OrderedDict()):
+                    print(block_zone[row_name])
+                else:
+                    for item in block_zone[row_name]:
+                        print(block_zone[row_name][item], end = ' ')
+                    print('\t', end = '')
+                    for item in block_zone[row_name]:
+                        print(item, end = ', ')
+                        # print('')
+                    print('')
+            print('')
+    except:
+        # weighted average of different dust species
         for zone_id in range(sample_para_dict['#Number of zones']):
             block_zone = sample_para_dict[block_name]['zone' + str(zone_id)]
             for category in block_zone:
@@ -513,22 +532,8 @@ def print10_Grain_properties(sample_para_dict):
                                 print(item, end = ', ')
                             print('')
                     print('')
-    else:
-        # currently *ONLY* support 1 zone, 1 species, and N components
-        block_zone = sample_para_dict[block_name]
-        print(1, 'Number of species')
-        for row_name in block_zone:
-            if type(block_zone[row_name]) != type(collections.OrderedDict()):
-                print(block_zone[row_name])
-            else:
-                for item in block_zone[row_name]:
-                    print(block_zone[row_name][item], end = ' ')
-                print('\t', end = '')
-                for item in block_zone[row_name]:
-                    print(item, end = ', ')
-                    # print('')
-                print('')
-        print('')
+
+
             
 def print11_Molecular_RT_settings(sample_para_dict):
     block_name = '#Molecular RT settings'
