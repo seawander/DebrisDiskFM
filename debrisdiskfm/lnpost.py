@@ -126,3 +126,64 @@ def lnpost_hr4796aH2spf(var_values = None, var_names = None, path_obs = None, pa
         if hash_address:               
             shutil.rmtree(path_model[:-1] + hash_string + '/')
         return -np.inf                  #loglikelihood calculation is not sucessful
+          
+def lnpost_pds70keck(var_values = None, var_names = None, data_input_info = None, path_obs = None, path_model = None, calcSED = False, hash_address = True, calcImage = False, Keck38 = True, pit = False, pit_input = None):
+    """Returns the log-posterior probability (post = prior * likelihood, thus lnpost = lnprior + lnlike)
+    for a given parameter combination.
+    Input:  var_values: number array, values for var_names. Refer to mcfostRun() for details. 
+                'It is important that the first argument of the probability function is the position of a single walker (a N dimensional numpy array).' (http://dfm.io/emcee/current/user/quickstart/)
+            var_names: string array, names of variables. Refer to mcfostRun() for details.
+            path_obs: string, address where the observed values are stored.
+            path_model: string, address where you would like to store the MCFOST dust properties.
+            calcSED: boolean, whether to calculate the SED of the system.
+            hash_address: boolean, "True" strongly suggested for parallel computation efficiency--folders with different names will be created and visited.
+            calcImage: whether to calculate the images for such system.
+            calcSPF: whether to calculate the phase function for this system.
+            Fe_composition: boolean, default is False (i.e., use amorphous Silicates, amorphous Carbon, and water Ice);
+                                    if True, water ice will be switched to Fe-Posch.
+            pit: boolean, whether to use Probability Integral Transform (PIT) to sample from the posteriors from the previous MCMC run?
+                If True, then `pit_input` cannot be None
+            pit_input: 2D array/matrix, input MCMC posterior from last run, if not None, only when `pit == True` will it be considered
+    Output: log-posterior probability."""
+    if pit: # currently a placeholder in case more calculations are needed
+        var_values_percentiles = np.copy(var_values)
+        for percentile in var_values_percentiles:
+            if not (2.5 <= percentile <= 97.5):
+                return -np.inf                  #only accept percentiles ranging from 2.5 to 97.5 (PIT requirement: ``p-value'' >= 0.05)
+        for i, percentile in enumerate(var_values_percentiles):
+            var_values[i] = np.nanpercentile(pit_input[:, i], percentile)
+        
+    ln_prior = lnprior.lnprior_pds70keck(var_names = var_names, var_values = var_values)
+    
+    if not np.isfinite(ln_prior):
+        return -np.inf
+        
+    run_flag = 1
+    try:
+        if hash_address:
+            run_flag, hash_string = mcfostRun.run_pds70keck(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = calcImage, hash_address = hash_address, Keck38 = Keck38)
+        else:
+            run_flag = mcfostRun.run_pds70keck(var_names = var_names, var_values = var_values, paraPath = path_model, calcSED = calcSED, calcImage = calcImage, hash_address = hash_address, Keck38 = Keck38)
+    except:
+        pass
+        
+    if not (run_flag == 0):             # if run is not successful, remove the folders
+        try:
+            if hash_address:
+                shutil.rmtree(path_model[:-1] + hash_string + '/')
+            else:
+                shutil.rmtree(path_model)
+        except:
+            print('This folder is not successfully removed.')
+        return -np.inf
+    try:                                # if run is successful, calculate the posterior
+        if hash_address:
+            ln_likelihood = lnlike.lnlike_pds70keck(path_obs = path_obs, path_model = path_model, hash_address = hash_address, hash_string = hash_string, data_input_info = data_input_info)
+        else:
+            ln_likelihood = lnlike.lnlike_pds70keck(path_obs = path_obs, path_model = path_model, hash_address = hash_address, data_input_info = data_input_info)
+        
+        return ln_prior + ln_likelihood
+    except:
+        if hash_address:               
+            shutil.rmtree(path_model[:-1] + hash_string + '/')
+        return -np.inf                  #loglikelihood calculation is not sucessful

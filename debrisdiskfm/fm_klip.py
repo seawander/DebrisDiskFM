@@ -71,11 +71,13 @@ def klip(trg, pcs, mask = None, klipK = None, cube = True, trg2D=True):
     if klipK is None:
         klipK = pcs.shape[0]
         
+    mask[np.isnan(trg)] = 0
+        
     width = mask.shape[0]         # Number of rows, width_y
     width_x = mask.shape[1]       # The above two lines are used to reconstruct a 1D image back to 2D.
     mask_flat = mask.flatten()
     
-    if trg2D==True:
+    if trg2D is True:
         trg_flat, std = flattenAndNormalize(trg, mask, onlyMasked = False)
     else:
         trg_flat = np.zeros(mask_flat.shape)

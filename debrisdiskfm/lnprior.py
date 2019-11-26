@@ -130,3 +130,53 @@ def lnprior_hr4796aH2spf(var_names = None, var_values = None):
                 return -np.inf
     return 0
 
+def lnprior_pds70keck(var_names = None, var_values = None):
+    """This code sets the prior for the MCMC modeling of the Keck Lp image (3.8 micron)."""
+    if var_names is None:
+        var_names = ['inc', 'PA', 'm_disk', 
+                     'Rc', 'R_in', 'alpha_in', 'R_out', 'alpha_out', 'porosity', 
+                     'a_min', 'Q_powerlaw', 'scale height']
+    if var_values is None:    
+        var_values = [49.7, -21.4, -7, 
+                     67.8, 60, 2,  76, -2, 0.0,
+                    -2.0, 3.5, 1.812]
+    var_values = list(np.round(var_values, 3)) #round to 3 decimal digits
+                        
+    # The MCFOST definition of inclination and position angle is not what we have been using.
+
+    theta = dict(zip(var_names, var_values))
+    for var_name in var_names:
+        if var_name == 'inc':
+            if not (-45 < (theta['inc'] - 49.7) < 45):
+                return -np.inf
+        elif var_name == 'PA':
+            if not (-45 < (theta['PA'] + 21.4) < 45):
+                return -np.inf
+        elif var_name == 'm_disk':
+            if not (-12 < theta['m_disk'] < -4):
+                return -np.inf
+        elif var_name == 'Rc':
+            if not (-30 < (theta['Rc'] - 67.8) < 30):
+                return -np.inf
+        elif var_name == 'R_in':
+            if not (0 < theta['R_in'] < 67.8) or not (theta['R_in'] < theta['Rc']):
+                return -np.inf
+        elif var_name == 'R_out':
+            if not (67.8 < theta['R_out'] < 90) or not (theta['R_out'] > theta['Rc']):
+                return -np.inf
+        elif var_name == 'alpha_in':
+            if not (0 < theta['alpha_in'] < 7):
+                return -np.inf
+        elif var_name == 'alpha_out':
+            if not (-15 < theta['alpha_out'] < 0):
+                return -np.inf
+        elif var_name == 'porosity':
+            if not (0 <= theta['porosity'] <= 1):
+                return -np.inf
+        elif var_name == 'a_min':
+            if not (-3 < theta['a_min'] < 2): #find minimum dust size between 0.5µm and 100µm
+                return -np.inf
+        elif var_name == 'Q_powerlaw':
+            if not (1 < theta['Q_powerlaw'] < 10):
+                return -np.inf
+    return 0
