@@ -147,10 +147,10 @@ def lnprior_pds70keck(var_names = None, var_values = None):
     theta = dict(zip(var_names, var_values))
     for var_name in var_names:
         if var_name == 'inc':
-            if not (-45 < (theta['inc'] - 49.7) < 45):
+            if not (-20 < (theta['inc'] - 65) < 20):
                 return -np.inf
         elif var_name == 'PA':
-            if not (-45 < (theta['PA'] + 21.4) < 45):
+            if not (-10 < (theta['PA'] + 21.4) < 10):
                 return -np.inf
         elif var_name == 'm_disk':
             if not (-12 < theta['m_disk'] < -4):
