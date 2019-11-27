@@ -678,8 +678,8 @@ def run_pds70keck(var_names = None, var_values = None, paraPath = None, calcSED 
 
     param_PDS70['#Grain properties']['zone0']['species0']['row1']['Optical indices file'] = 'dlsi_opct.dat'  #'MgSiO3.dat'
 
-    param_PDS70['#Star properties']['star0']['row0']['Temp'] = 4406
-    param_PDS70['#Star properties']['star0']['row0']['radius'] = 1.39
+    param_PDS70['#Star properties']['star0']['row0']['Temp'] = 4226
+    param_PDS70['#Star properties']['star0']['row0']['radius'] = 1.06
     param_PDS70['#Star properties']['star0']['row0']['M'] = 0.82
     param_PDS70['#Star properties']['star0']['row0']['is a blackbody?'] = 'T'
     param_PDS70['#Star properties']['star0']['row1'] = 'lte4000-3.5.NextGen.fits.gz'

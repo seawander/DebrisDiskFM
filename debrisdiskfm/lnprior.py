@@ -159,10 +159,10 @@ def lnprior_pds70keck(var_names = None, var_values = None):
             if not (-30 < (theta['Rc'] - 67.8) < 30):
                 return -np.inf
         elif var_name == 'R_in':
-            if not (0 < theta['R_in'] < 67.8) or not (theta['R_in'] < theta['Rc']):
+            if not (theta['R_in'] < theta['Rc']): #not (0 < theta['R_in'] < 67.8) or 
                 return -np.inf
         elif var_name == 'R_out':
-            if not (67.8 < theta['R_out'] < 90) or not (theta['R_out'] > theta['Rc']):
+            if not (theta['R_out'] > theta['Rc']): #not (67.8 < theta['R_out'] < 90) or 
                 return -np.inf
         elif var_name == 'alpha_in':
             if not (0 < theta['alpha_in'] < 7):
