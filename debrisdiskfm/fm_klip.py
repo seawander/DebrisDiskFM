@@ -51,7 +51,58 @@ def flattenAndNormalize(image, mask = None, onlyMasked = True):
             image_slice = images[i]
             result[i], std[i] = flattenAndNormalize(image_slice, mask = mask, onlyMasked = onlyMasked)
         return result, std
+
+def pcaImageCube(ref, mask = None, pcNum = None, cube=True, ref3D=True, outputEval = False):
+    """Principal Component Analysis, 
+    Input: 
+        ref: Cube of references, 3D; 
+            if ref3D==False, 2D (Flattened and Normalized, with maksked region excluded.) 
+        mask: mask, 2D or 1D;
+        pcNum: how many principal components are needed;
+        cube: output as a cube? Otherwise a flattend 2D component array will be returned.
+        ref3D: Ture by default.
+        outputEval: whether to return the eigen values, False by default.
+    Output:
+        The principal components, either cube (3D) or flattend (2D)."""
+    if mask is None:
+        mask = np.ones(ref[0].shape)
+    if pcNum is None:
+        pcNum = ref.shape[0]
+    if ref3D:
+        mask_flat = mask.flatten()
+        ref_flat = np.zeros((ref.shape[0], np.where(mask_flat == 1)[0].shape[0]))
+        for i in range(ref_flat.shape[0]):
+            ref_flat[i], std = flattenAndNormalize(ref[i], mask)
+    else:
+        ref_flat = ref
+        if np.shape(mask.shape)[0] == 1: #1D mask, already flattened
+            mask_flat = mask
+        elif np.shape(mask.shape)[0] == 2: #2D mask, need flatten
+            mask_flat = mask.flatten()
+        
+    covMatrix = np.dot(ref_flat, np.transpose(ref_flat))
+    eVal, eVec = np.linalg.eig(covMatrix)
+    index = (-eVal).argsort()[:pcNum]
+    eVec = eVec[:,index]
+    components_flatten = np.dot(np.transpose(eVec), ref_flat)
     
+    pc_flat = np.zeros((pcNum, mask_flat.shape[0]))
+    
+    for i in range(pc_flat.shape[0]):
+        pc_flat[i][np.where(mask_flat==1)] = components_flatten[i]/np.sqrt(np.dot(components_flatten[i], np.transpose(components_flatten[i])))
+    if cube == False:
+        return pc_flat
+    
+    pc_cube = np.zeros((pcNum, mask.shape[0], mask.shape[1]))
+    width = mask.shape[0]
+    for i in range(pc_flat.shape[0]):
+        pc_cube[i] = np.array(np.split(pc_flat[i], width))
+        
+    if not outputEval:
+        return pc_cube
+    else:
+        return pc_cube, eVal[index]
+           
 def klip(trg, pcs, mask = None, klipK = None, cube = True, trg2D=True):
     """KLIP Algorithm. 
     Input:
