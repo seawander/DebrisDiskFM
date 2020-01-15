@@ -326,3 +326,116 @@ def lnlike_pds70keck(path_obs = None, path_model = None, hash_address = False, d
         shutil.rmtree(path_model)
     
     return  lnlike_value #Returns the loglikelihood
+    
+def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = False, delete_model = True, hash_string = None, return_model_only = False, data_input_info = None, writemodel = False):
+    """Return the log-likelihood for observed data and modelled data.
+    Input:  path_obs: the path to the observed data
+            path_model: the path to the (forwarded) models
+            hash_address: whether to hash the address based on the values, if True, then the address should be provided by `hash_string'
+            delete_model: whether to delete the models. True by default.
+            return_model_only: only return the forwarded models for debug/grid-modeling purpose
+            data_input_info: a class object containign input data, uncertainty, mask, etc. See row 270 for a setup example. 
+            writemodel: write model in the model folder for easy comparison
+    Output: log-likelihood
+            """
+    ### Observations:
+    if data_input_info is None: 
+        print("Reading the observation each time, this might be redundant. See the else sentences in this block...")
+        if path_obs is None:
+            path_obs = './reduction-bren/'
+        
+        data_obs = fits.getdata(path_obs + 'result_median_3components.fits')
+        unc_obs = fits.getdata(path_obs + 'result_std_3components.fits')
+        obs_raw = fits.getdata(path_obs + 'data_cut.fits')
+
+        mask_obs = fits.getdata(path_obs + 'mask_161x161_in16_out80.fits')
+
+        mask_planet = fits.getdata(path_obs + 'mask_161x161_in16_out80_plus_planets.fits')
+        mask_disk = fits.getdata(path_obs + 'mask_disk.fits')
+        mask_calc = np.copy(mask_planet)*mask_disk
+        mask_calc[mask_calc < 1] = np.nan
+
+        angles = fits.getdata(path_obs + 'pyklip_parangs.fits')
+
+        psf_keck = fits.getdata(path_obs + 'psf_noscale.fits')
+        if np.nansum(psf_keck) > 1:
+            psf_keck /= np.nansum(psf_keck)
+    else:
+        data_obs = np.copy(data_input_info.data_obs)
+        unc_obs = np.copy(data_input_info.unc_obs)
+        obs_raw = np.copy(data_input_info.obs_raw)
+        mask_obs = np.copy(data_input_info.mask_obs)
+        mask_planet = np.copy(data_input_info.mask_planet)
+        mask_calc = np.copy(data_input_info.mask_calc)
+        mask_calc[mask_calc < 1] = np.nan
+        angles = np.copy(data_input_info.angles)
+        psf_keck = np.copy(data_input_info.psf)
+        # See the following for a sample setup with the class object --- do it before calling the posterior function
+        # This is designed to speed up the calculations by reading the observations for only once.
+        # >>> code start 1
+        # class data_input:
+        #     def __init__(self, path_obs = None, data_obs = None, unc_obs = None, mask_obs = None, mask_planet = None,
+        #                 psf = None, components_klip = None, angles = None):
+        #         if path_obs is not None:
+        #             self.data_obs = fits.getdata(path_obs + 'result_median_3components.fits')
+        #             self.unc_obs = fits.getdata(path_obs + 'result_std_3components.fits')
+        #             self.obs_raw = fits.getdata(path_obs + 'data_cut.fits')
+        #
+        #             self.mask_obs = fits.getdata(path_obs + 'mask_161x161_in16_out80.fits')
+        #
+        #             self.mask_planet = fits.getdata(path_obs + 'mask_161x161_in16_out80_plus_planets.fits')
+        #             self.mask_disk = fits.getdata(path_obs + 'mask_disk.fits')
+        #             self.mask_calc = np.copy(self.mask_planet) * mask_disk
+        #             self.mask_calc[np.where(self.mask_calc < 1)] = np.nan
+        #
+        #             self.angles = fits.getdata(path_obs + 'pyklip_parangs.fits')
+        #
+        #             self.psf = fits.getdata(path_obs + 'psf_noscale.fits')
+        #             self.psf /= np.nansum(self.psf)
+        # <<< code end 1
+        # Then set the object up as:
+        # >>> code start 2
+        # data_input_info = data_input(path_obs = './reduction-bren/')
+        # <<< code end 2
+
+    ### (Forwarded) Models:
+    if path_model is None:
+        path_model = './mcfost_models/'
+    if hash_address:
+        if hash_string is None:
+            print('Please provide the hash string if you set hash_address = True!')
+            return -np.inf     
+        path_model = path_model[:-1] + hash_string + '/'
+
+    model_mcfost = fits.getdata(path_model + 'data_3.8/RT.fits.gz')*8e20
+
+    if len(model_mcfost.shape) == 5:
+        model_mcfost = model_mcfost[0, 0, 0]
+
+    model_mcfost[(model_mcfost.shape[0] - 1)//2, (model_mcfost.shape[1] - 1)//2] = 0
+
+    cube = dependencies.rotateCube(model_mcfost, angle=-angles, mask = mask_obs, maskedNaN=True, outputMask=False)
+    cube_convoled = np.array([image_registration.fft_tools.convolve_nd.convolvend(cube[i], psf_keck) for i in range(cube.shape[0])])
+    
+    #negative injection
+    obs_neg_injected = obs_raw - cube_convoled
+    # PCA for negative injected observation
+    components_neg_injected = fm_klip.pcaImageCube(obs_neg_injected, mask_obs, pcNum = 3)
+    klipped_neg_injected = np.zeros_like(obs_neg_injected)
+    for i in range(klipped_neg_injected.shape[0]):
+        klipped_neg_injected[i] = fm_klip.klip(obs_neg_injected[i], components_neg_injected[:3], mask_obs, cube = False)
+    
+    reduced_derotated =  dependencies.rotateCube(klipped_neg_injected, angle=angles, mask = mask_obs, maskedNaN=True, outputMask=False)
+    
+    result_neg_inj = np.nanmedian(reduced_derotated, axis = 0)
+    unc_neg_inj = np.nanstd(reduced_derotated, axis = 0)
+        
+    lnlike_value = chi2(result_neg_inj*mask_calc, unc_neg_inj*mask_calc, np.zeros_like(result_neg_inj), lnlike=True)
+    
+    if writemodel:
+        fits.writeto(path_model + 'model_fm.fits', result_neg_inj*mask_calc/unc_neg_inj, overwrite = True)
+        
+    if hash_address and delete_model:    #delete the temporary MCFOST models only when the string is hashed
+        shutil.rmtree(path_model)
+    
+    return  lnlike_value #Returns the loglikelihood
