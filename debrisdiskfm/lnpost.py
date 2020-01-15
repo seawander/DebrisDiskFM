@@ -178,9 +178,9 @@ def lnpost_pds70keck(var_values = None, var_names = None, data_input_info = None
         return -np.inf
     try:                                # if run is successful, calculate the posterior
         if hash_address:
-            ln_likelihood = lnlike.lnlike_pds70keck(path_obs = path_obs, path_model = path_model, hash_address = hash_address, hash_string = hash_string, data_input_info = data_input_info)
+            ln_likelihood = lnlike.lnlike_pds70keck_ADI(path_obs = path_obs, path_model = path_model, hash_address = hash_address, hash_string = hash_string, data_input_info = data_input_info)
         else:
-            ln_likelihood = lnlike.lnlike_pds70keck(path_obs = path_obs, path_model = path_model, hash_address = hash_address, data_input_info = data_input_info)
+            ln_likelihood = lnlike.lnlike_pds70keck_ADI(path_obs = path_obs, path_model = path_model, hash_address = hash_address, data_input_info = data_input_info)
         
         return ln_prior + ln_likelihood
     except:
