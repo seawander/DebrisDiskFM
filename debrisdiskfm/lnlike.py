@@ -327,7 +327,7 @@ def lnlike_pds70keck(path_obs = None, path_model = None, hash_address = False, d
     
     return  lnlike_value #Returns the loglikelihood
     
-def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = False, delete_model = True, hash_string = None, return_model_only = False, data_input_info = None, writemodel = False):
+def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = False, delete_model = True, hash_string = None, return_model_only = False, data_input_info = None, writemodel = True):
     """Return the log-likelihood for observed data and modelled data.
     Input:  path_obs: the path to the observed data
             path_model: the path to the (forwarded) models
@@ -433,7 +433,9 @@ def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = Fals
     lnlike_value = chi2(result_neg_inj*mask_calc, unc_neg_inj*mask_calc, np.zeros_like(result_neg_inj), lnlike=True)
     
     if writemodel:
-        fits.writeto(path_model + 'model_fm.fits', result_neg_inj*mask_calc/unc_neg_inj, overwrite = True)
+        fits.writeto(path_model + 'model_fm.fits', result_neg_inj, overwrite = True)
+        fits.writeto(path_model + 'model_fm_snr.fits', result_neg_inj/unc_neg_inj*mask_calc, overwrite = True)
+        
         
     if hash_address and delete_model:    #delete the temporary MCFOST models only when the string is hashed
         shutil.rmtree(path_model)

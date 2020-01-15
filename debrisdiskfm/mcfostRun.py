@@ -653,7 +653,7 @@ def run_pds70keck(var_names = None, var_values = None, paraPath = None, calcSED 
     8. `paramfiles_only`: whether to only generate the parameter files.
     """
     
-    param_PDS70 = mcfostParameterTemplate.generateMcfostTemplate(1, [1], 1)
+    param_PDS70 = mcfostParameterTemplate.generateMcfostTemplate(1, [3], 1)
 
     resolution_kecknirc2 = 0.009942
 
@@ -673,11 +673,17 @@ def run_pds70keck(var_names = None, var_values = None, paraPath = None, calcSED 
     param_PDS70['#Density structure']['zone0']['row2']['vertical profile exponent'] = 2
 
     param_PDS70['#Grain properties']['zone0']['species0']['row0']['Grain type'] = 'Mie'
+    param_PDS70['#Grain properties']['zone0']['species1']['row0']['Grain type'] = 'Mie'
+    param_PDS70['#Grain properties']['zone0']['species2']['row0']['Grain type'] = 'Mie'
 
     param_PDS70['#Grain properties']['zone0']['species0']['row3']['amax'] = 1e3
+    param_PDS70['#Grain properties']['zone0']['species1']['row3']['amax'] = 1e3
+    param_PDS70['#Grain properties']['zone0']['species2']['row3']['amax'] = 1e3
 
     param_PDS70['#Grain properties']['zone0']['species0']['row1']['Optical indices file'] = 'dlsi_opct.dat'  #'MgSiO3.dat'
-
+    param_PDS70['#Grain properties']['zone0']['species1']['row1']['Optical indices file'] = 'ac_opct.dat'    #'lgsi_opct.dat'
+    param_PDS70['#Grain properties']['zone0']['species2']['row1']['Optical indices file'] = 'ice_opct.dat'
+    
     param_PDS70['#Star properties']['star0']['row0']['Temp'] = 4226
     param_PDS70['#Star properties']['star0']['row0']['radius'] = 1.06
     param_PDS70['#Star properties']['star0']['row0']['M'] = 0.82
@@ -693,9 +699,11 @@ def run_pds70keck(var_names = None, var_values = None, paraPath = None, calcSED 
     ###############################################################################################
     var_names_all = ['inc', 'PA', 'm_disk', 
                      'Rc', 'R_in', 'alpha_in', 'R_out', 'alpha_out', 'porosity', 
+                     'fmass_0', 'fmass_1', 
                      'a_min', 'Q_powerlaw', 'scale height', 'grain type']
     var_values_all = [49.7, -21.4, -7, 
-                     67.8, 60, 2,  76, -2, 0.0,
+                     67.8, 60, 2,  76, -2, 0.0, 
+                     0.0001, 0.0001,
                     -2.0, 3.5, 1.812, 'Mie'] # set Vmax default = 0 (Mie theory case)
     # Note: a_min and m_disk are in log scale, i.e., the actual mass is 10**(value).
     if var_names is None:
@@ -759,18 +767,40 @@ def run_pds70keck(var_names = None, var_values = None, paraPath = None, calcSED 
         elif var_name == 'porosity':
             if var_name in var_names:
                 param_PDS70['#Grain properties']['zone0']['species0']['row0']['porosity'] = round(theta[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species1']['row0']['porosity'] = round(theta[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species2']['row0']['porosity'] = round(theta[var_name], 3)
             else:
-                param_PDS70['#Grain properties']['zone0']['species0']['row0']['porosity'] = round(theta_all[var_name], 3)                
+                param_PDS70['#Grain properties']['zone0']['species0']['row0']['porosity'] = round(theta_all[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species1']['row0']['porosity'] = round(theta_all[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species2']['row0']['porosity'] = round(theta_all[var_name], 3)  
+        elif var_name == 'fmass_0':
+            precision = 5
+            if var_name in var_names:
+                param_PDS70['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta[var_name], precision)
+                param_PDS70['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta['fmass_1'], precision)
+                param_PDS70['#Grain properties']['zone0']['species2']['row0']['mass fraction'] = round(1 - theta[var_name] - theta['fmass_1'], 3)
+            else:
+                param_PDS70['#Grain properties']['zone0']['species0']['row0']['mass fraction'] = round(theta_all[var_name], precision)
+                param_PDS70['#Grain properties']['zone0']['species1']['row0']['mass fraction'] = round(theta_all['fmass_1'], precision)
+                param_PDS70['#Grain properties']['zone0']['species2']['row0']['mass fraction'] = round(1 - theta_all[var_name] - theta_all['fmass_1'], 3)           
         elif var_name == 'a_min':
             if var_name in var_names:
                 param_PDS70['#Grain properties']['zone0']['species0']['row3']['amin'] = format(10**theta[var_name], '.3e')
+                param_PDS70['#Grain properties']['zone0']['species1']['row3']['amin'] = format(10**theta[var_name], '.3e')
+                param_PDS70['#Grain properties']['zone0']['species2']['row3']['amin'] = format(10**theta[var_name], '.3e')
             else:
                 param_PDS70['#Grain properties']['zone0']['species0']['row3']['amin'] = format(10**theta_all[var_name], '.3e')
+                param_PDS70['#Grain properties']['zone0']['species1']['row3']['amin'] = format(10**theta_all[var_name], '.3e')
+                param_PDS70['#Grain properties']['zone0']['species2']['row3']['amin'] = format(10**theta_all[var_name], '.3e')
         elif var_name == 'Q_powerlaw':
             if var_name in var_names:
                 param_PDS70['#Grain properties']['zone0']['species0']['row3']['aexp'] = round(theta[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species1']['row3']['aexp'] = round(theta[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species2']['row3']['aexp'] = round(theta[var_name], 3)
             else:
                 param_PDS70['#Grain properties']['zone0']['species0']['row3']['aexp'] = round(theta_all[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species1']['row3']['aexp'] = round(theta_all[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species2']['row3']['aexp'] = round(theta_all[var_name], 3)
         elif var_name == 'scale height':
             if var_name in var_names:
                 param_PDS70['#Density structure']['zone0']['row2']['scale height'] = round(theta[var_name], 3)
@@ -781,13 +811,21 @@ def run_pds70keck(var_names = None, var_values = None, paraPath = None, calcSED 
                 theta_all[var_name] = 'Mie'
             if var_name in var_names:
                 param_PDS70['#Grain properties']['zone0']['species0']['row0']['Grain type'] = theta[var_name]
+                param_PDS70['#Grain properties']['zone0']['species1']['row0']['Grain type'] = theta[var_name]
+                param_PDS70['#Grain properties']['zone0']['species2']['row0']['Grain type'] = theta[var_name]
             else:
                 param_PDS70['#Grain properties']['zone0']['species0']['row0']['Grain type'] = theta_all[var_name]
+                param_PDS70['#Grain properties']['zone0']['species1']['row0']['Grain type'] = theta_all[var_name]
+                param_PDS70['#Grain properties']['zone0']['species2']['row0']['Grain type'] = theta_all[var_name]
         elif var_name == 'Vmax':
             if var_name in var_names:
                 param_PDS70['#Grain properties']['zone0']['species0']['row0']['Vmax'] = round(theta[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species1']['row0']['Vmax'] = round(theta[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species2']['row0']['Vmax'] = round(theta[var_name], 3)
             else:
                 param_PDS70['#Grain properties']['zone0']['species0']['row0']['Vmax'] = round(theta_all[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species1']['row0']['Vmax'] = round(theta_all[var_name], 3)
+                param_PDS70['#Grain properties']['zone0']['species2']['row0']['Vmax'] = round(theta_all[var_name], 3)
     ###############################################################################################
     ########################### Section 3: Parameter File for PDS70 ############################
     ######################### Instrument-specific adjusts for the system. #########################

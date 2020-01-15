@@ -135,10 +135,12 @@ def lnprior_pds70keck(var_names = None, var_values = None):
     if var_names is None:
         var_names = ['inc', 'PA', 'm_disk', 
                      'Rc', 'R_in', 'alpha_in', 'R_out', 'alpha_out', 'porosity', 
+                     'fmass_0', 'fmass_1', 
                      'a_min', 'Q_powerlaw', 'scale height']
     if var_values is None:    
         var_values = [49.7, -21.4, -7, 
                      67.8, 60, 2,  76, -2, 0.0,
+                     0.0, 0.0,
                     -2.0, 3.5, 1.812]
     var_values = list(np.round(var_values, 3)) #round to 3 decimal digits
                         
@@ -172,6 +174,9 @@ def lnprior_pds70keck(var_names = None, var_values = None):
                 return -np.inf
         elif var_name == 'porosity':
             if not (0 <= theta['porosity'] <= 1):
+                return -np.inf
+        elif var_name == 'fmass_0':
+            if not (0 <= theta['fmass_0'] <= 1) or (not (0 <= theta['fmass_1'] <= 1)) or (not (0 <= (theta['fmass_0'] + theta['fmass_1']) <= 1)):
                 return -np.inf
         elif var_name == 'a_min':
             if not (-3 < theta['a_min'] < 2): #find minimum dust size between 0.5µm and 100µm
