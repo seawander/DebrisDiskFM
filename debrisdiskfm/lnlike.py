@@ -327,7 +327,7 @@ def lnlike_pds70keck(path_obs = None, path_model = None, hash_address = False, d
     
     return  lnlike_value #Returns the loglikelihood
     
-def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = False, delete_model = True, hash_string = None, return_model_only = False, data_input_info = None, writemodel = True):
+def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = False, delete_model = True, hash_string = None, return_model_only = False, data_input_info = None, writemodel = False):
     """Return the log-likelihood for observed data and modelled data.
     Input:  path_obs: the path to the observed data
             path_model: the path to the (forwarded) models
@@ -370,6 +370,8 @@ def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = Fals
         mask_calc[mask_calc < 1] = np.nan
         angles = np.copy(data_input_info.angles)
         psf_keck = np.copy(data_input_info.psf)
+        map_transmission = np.copy(data_input_info.map_transmission)
+        
         # See the following for a sample setup with the class object --- do it before calling the posterior function
         # This is designed to speed up the calculations by reading the observations for only once.
         # >>> code start 1
@@ -387,6 +389,8 @@ def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = Fals
         #             self.mask_disk = fits.getdata(path_obs + 'mask_disk.fits')
         #             self.mask_calc = np.copy(self.mask_planet) * mask_disk
         #             self.mask_calc[np.where(self.mask_calc < 1)] = np.nan
+        #
+        #             self.map_transmission = fits.getdata(path_obs + 'NIRC2transmissionmap_161x161.fits')
         #
         #             self.angles = fits.getdata(path_obs + 'pyklip_parangs.fits')
         #
@@ -417,6 +421,8 @@ def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = Fals
     cube = dependencies.rotateCube(model_mcfost, angle=-angles, mask = mask_obs, maskedNaN=True, outputMask=False)
     cube_convoled = np.array([image_registration.fft_tools.convolve_nd.convolvend(cube[i], psf_keck) for i in range(cube.shape[0])])
     
+    cube_convoled *= map_transmission #multiply the transmission map
+    
     #negative injection
     obs_neg_injected = obs_raw - cube_convoled
     # PCA for negative injected observation
@@ -434,7 +440,7 @@ def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = Fals
     
     if writemodel:
         fits.writeto(path_model + 'model_fm.fits', result_neg_inj, overwrite = True)
-        fits.writeto(path_model + 'model_fm_snr.fits', result_neg_inj/unc_neg_inj*mask_calc, overwrite = True)
+        fits.writeto(path_model + 'model_fm_snr.fits', result_neg_inj/unc_neg_inj, overwrite = True)
         
         
     if hash_address and delete_model:    #delete the temporary MCFOST models only when the string is hashed
