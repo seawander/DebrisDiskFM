@@ -440,6 +440,8 @@ def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = Fals
     
     if writemodel:
         fits.writeto(path_model + 'model_fm.fits', result_neg_inj, overwrite = True)
+        fits.writeto(path_model + 'model_convolved.fits', image_registration.fft_tools.convolve_nd.convolvend(model_mcfost, psf_keck), overwrite = True)
+        fits.writeto(path_model + 'model_convolved_times_transmission.fits', image_registration.fft_tools.convolve_nd.convolvend(model_mcfost, psf_keck)*map_transmission, overwrite = True)
         fits.writeto(path_model + 'model_fm_snr.fits', result_neg_inj/unc_neg_inj, overwrite = True)
         
         
