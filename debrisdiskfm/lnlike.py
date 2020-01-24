@@ -426,10 +426,10 @@ def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = Fals
     #negative injection
     obs_neg_injected = obs_raw - cube_convoled
     # PCA for negative injected observation
-    components_neg_injected = fm_klip.pcaImageCube(obs_neg_injected, mask_obs, pcNum = 3)
+    components_neg_injected = fm_klip.pcaImageCube(obs_neg_injected, mask_obs, pcNum = 4)
     klipped_neg_injected = np.zeros_like(obs_neg_injected)
     for i in range(klipped_neg_injected.shape[0]):
-        klipped_neg_injected[i] = fm_klip.klip(obs_neg_injected[i], components_neg_injected[:3], mask_obs, cube = False)
+        klipped_neg_injected[i] = fm_klip.klip(obs_neg_injected[i], components_neg_injected, mask_obs, cube = False)
     
     reduced_derotated =  dependencies.rotateCube(klipped_neg_injected, angle=angles, mask = mask_obs, maskedNaN=True, outputMask=False)
     
@@ -439,6 +439,7 @@ def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = Fals
     lnlike_value = chi2(result_neg_inj*mask_calc, unc_neg_inj*mask_calc, np.zeros_like(result_neg_inj), lnlike=True)
     
     if writemodel:
+        fits.writeto(path_model + 'cube_minus_disk.fits', obs_neg_injected, overwrite = True)
         fits.writeto(path_model + 'model_fm.fits', result_neg_inj, overwrite = True)
         fits.writeto(path_model + 'model_convolved.fits', image_registration.fft_tools.convolve_nd.convolvend(model_mcfost, psf_keck), overwrite = True)
         fits.writeto(path_model + 'model_convolved_times_transmission.fits', image_registration.fft_tools.convolve_nd.convolvend(model_mcfost, psf_keck)*map_transmission, overwrite = True)
