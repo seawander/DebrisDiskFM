@@ -434,7 +434,7 @@ def lnlike_pds70keck_ADI(path_obs = None, path_model = None, hash_address = Fals
     reduced_derotated =  dependencies.rotateCube(klipped_neg_injected, angle=angles, mask = mask_obs, maskedNaN=True, outputMask=False)
     
     result_neg_inj = np.nanmedian(reduced_derotated, axis = 0)
-    unc_neg_inj = np.nanstd(reduced_derotated, axis = 0)
+    unc_neg_inj = np.nanstd(reduced_derotated, axis = 0)/np.sqrt(48)
         
     lnlike_value = chi2(result_neg_inj*mask_calc, unc_neg_inj*mask_calc, np.zeros_like(result_neg_inj), lnlike=True)
     
