@@ -136,12 +136,12 @@ def lnprior_pds70keck(var_names = None, var_values = None):
         var_names = ['inc', 'PA', 'm_disk', 
                      'Rc', 'R_in', 'alpha_in', 'R_out', 'alpha_out', 'porosity', 
                      'fmass_0', 'fmass_1', 
-                     'a_min', 'Q_powerlaw', 'scale height']
+                     'a_min', 'Q_powerlaw', 'scale height', 'flaring exp']
     if var_values is None:    
         var_values = [49.7, -21.4, -7, 
                      67.8, 60, 2,  76, -2, 0.0,
                      0.0, 0.0,
-                    -2.0, 3.5, 1.812]
+                    -2.0, 3.5, 1.812, 1.0]
     var_values = list(np.round(var_values, 3)) #round to 3 decimal digits
                         
     # The MCFOST definition of inclination and position angle is not what we have been using.
@@ -183,5 +183,8 @@ def lnprior_pds70keck(var_names = None, var_values = None):
                 return -np.inf
         elif var_name == 'Q_powerlaw':
             if not (1 < theta['Q_powerlaw'] < 10):
+                return -np.inf
+        elif var_name == 'flaring exp':
+            if not (0 < theta['flaring exp'] < 5):
                 return -np.inf
     return 0

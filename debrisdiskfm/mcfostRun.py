@@ -700,11 +700,11 @@ def run_pds70keck(var_names = None, var_values = None, paraPath = None, calcSED 
     var_names_all = ['inc', 'PA', 'm_disk', 
                      'Rc', 'R_in', 'alpha_in', 'R_out', 'alpha_out', 'porosity', 
                      'fmass_0', 'fmass_1', 
-                     'a_min', 'Q_powerlaw', 'scale height', 'grain type']
+                     'a_min', 'Q_powerlaw', 'scale height', 'grain type', 'flaring exp']
     var_values_all = [49.7, -21.4, -7, 
                      67.8, 60, 2,  76, -2, 0.0, 
                      0.0001, 0.0001,
-                    -2.0, 3.5, 1.812, 'Mie'] # set Vmax default = 0 (Mie theory case)
+                    -2.0, 3.5, 1.812, 'Mie', 1.0] # set Vmax default = 0 (Mie theory case)
     # Note: a_min and m_disk are in log scale, i.e., the actual mass is 10**(value).
     if var_names is None:
         var_names = var_names_all    #The above treatment allows for small paramter searching
@@ -764,6 +764,11 @@ def run_pds70keck(var_names = None, var_values = None, paraPath = None, calcSED 
                 param_PDS70['#Density structure']['zone0']['row5']['-gamma_exp/alpha_out'] = round(theta[var_name], 3)
             else:
                 param_PDS70['#Density structure']['zone0']['row5']['-gamma_exp/alpha_out'] = round(theta_all[var_name], 3)
+        elif var_name == 'flaring exp':
+            if var_name in var_names:
+                param_PDS70['#Density structure']['zone0']['row4']['flaring exponent'] = round(theta[var_name], 3)
+            else:
+                param_PDS70['#Density structure']['zone0']['row4']['flaring exponent'] = round(theta_all[var_name], 3)
         elif var_name == 'porosity':
             if var_name in var_names:
                 param_PDS70['#Grain properties']['zone0']['species0']['row0']['porosity'] = round(theta[var_name], 3)
@@ -826,6 +831,7 @@ def run_pds70keck(var_names = None, var_values = None, paraPath = None, calcSED 
                 param_PDS70['#Grain properties']['zone0']['species0']['row0']['Vmax'] = round(theta_all[var_name], 3)
                 param_PDS70['#Grain properties']['zone0']['species1']['row0']['Vmax'] = round(theta_all[var_name], 3)
                 param_PDS70['#Grain properties']['zone0']['species2']['row0']['Vmax'] = round(theta_all[var_name], 3)
+
     ###############################################################################################
     ########################### Section 3: Parameter File for PDS70 ############################
     ######################### Instrument-specific adjusts for the system. #########################
