@@ -6,7 +6,7 @@
 ### If you are using this model, please cite 
 ### Millar-Blanchaer, M. A., Graham, J. R., Pueyo, L., et al. 2015, ApJ, 811, 18
 #### exctracted from anadisk_e.py sent by Max in 2017
-#### This file is downloaded from https://github.com/seawander/debrisdisk_mcmc_fit_and_plot/blob/master/disk_models.py on 2020 July 2.
+#### This file is downloaded from https://github.com/johanmazoyer/debrisdisk_mcmc_fit_and_plot/blob/master/disk_models.py on 2020 July 2.
 ########################################################
 ########################################################
 
