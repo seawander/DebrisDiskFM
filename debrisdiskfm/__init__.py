@@ -5,6 +5,10 @@ from . import lnlike
 from . import mcfostRun
 from . import lnpost
 from . import dependencies
+from . import anadisk_sum_mask_MMB
+from . import anadisk_sum_mask_MMBog
+
+
 
 from .lnlike import lnlike_hd191089
 from .mcfostRun import run_hd191089
