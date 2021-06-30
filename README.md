@@ -1,16 +1,18 @@
 # DebrisDiskFM [![DOI](https://zenodo.org/badge/141328805.svg)](https://zenodo.org/badge/latestdoi/141328805) <a href="http://ascl.net/2001.008"><img src="https://img.shields.io/badge/ascl-2001.008-blue.svg?colorB=262255" alt="ascl:2001.008" /></a>
 Forward modeling for circumstellar debris disks in scattered light.
 
-Method: Monte Carlo Markov Chain (MCMC) with the MCFOST disk modeling software, see [here](http://ipag.osug.fr/public/pintec/mcfost/docs/html/index.html) for the documentation of MCFOST.
+Method: Monte Carlo Markov Chain (MCMC) with one of the two disk modeling software
+- the MCFOST disk modeling software, see [here](http://ipag.osug.fr/public/pintec/mcfost/docs/html/index.html) for the documentation of MCFOST.
+- the Python-based disk modeling code using Henyey–Greenstein phase function by M. Millar-Blanchaer, see [here](https://github.com/maxwellmb/anadisk_model) for the code, and [here](https://ui.adsabs.harvard.edu/abs/2015ApJ...811...18M/abstract) for the original usage of the code.
 
-First used: Ren, Choquet, Perrin et al. (2019) ([ADS link](https://ui.adsabs.harvard.edu/abs/2019ApJ...882...64R/abstract), [BibTeX](https://ui.adsabs.harvard.edu/abs/2019ApJ...882...64R/exportcitation)).
+DebrisDiskFM is first used in Ren, Choquet, Perrin et al. (2019) ([ADS link](https://ui.adsabs.harvard.edu/abs/2019ApJ...882...64R/abstract), [BibTeX](https://ui.adsabs.harvard.edu/abs/2019ApJ...882...64R/exportcitation)) with MCFOST, and in Ren, Choquet, Perrin et al. (2021) ([ADS link](https://ui.adsabs.harvard.edu/abs/2021ApJ...914...95R/abstract), [BibTeX](https://ui.adsabs.harvard.edu/abs/2021ApJ...914...95R/exportcitation)) with the M. Millar-Blanchaer code.
 
 ## 0. Installation
 ```pip install --user -e git+https://github.com/seawander/DebrisDiskFM.git#egg=Package```
 
 The above command does not require administrator access, and can be run both on one's personal desktop and on a computer cluster.
 
-## 1. Parameter File Setup
+## 1. Parameter File Setup (for MCFOST)
 #### 1.1 MCFOST Parameter File Template
 For a given sytem, generate a disk template with the following command
 ```python
