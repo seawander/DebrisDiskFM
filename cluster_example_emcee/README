@@ -1,13 +1,23 @@
-The files in this folder is to make sure your MPI code of MCMC works in a Slurm cluster. 
+The files in this folder are to make sure your MPI code of MCMC works in a Slurm cluster. 
 
 The test example is from http://dfm.io/emcee/current/user/line/ to demonstrate the MPI capability of EMCEE with line fitting
 
-Python scripts:
-    1. ``test.py'' is a single-core calcuation of MCMC
-    2. ``test_mpi.py'' is an MPI calculation of MCMC
+Python Scripts:
+    Scenario 1. ``test.py'' is a single-core calcuation of MCMC
+    Scenario 2. ``test_mpi.py'' is an MPI calculation of MCMC
 
-Submit ``test.py'' with
-``sbatch slurm_job_example_single_core''
+Job Submission:
+    1. Submit ``test.py'' with
+        ``sbatch slurm_job_example_single_core''
 
-Submit ``test_mpi.py'' with
-``sbatch slurm_job_example_single_core''
+    2. Submit ``test_mpi.py'' with
+        ``sbatch slurm_job_example_mpi''
+        
+    3. If you want to use multi-core computing but on a single node (somewhere between Scenario 1 and Scenario 2), replace the MPI example's Pool line with
+        ``from multiprocessing import Pool''
+       and the ``with MPIPool()'' with ``with Pool()''
+       
+       Then edit the MPI submission script as
+       ``#SBATCH --nodes=1 
+         #SBATCH --cpus-per-task=16 ## using 16 cores on this node
+       ''
